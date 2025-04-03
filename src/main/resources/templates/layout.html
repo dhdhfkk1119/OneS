@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OneS - 홈페이지</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <th:block th:replace="~{::css}"></th:block>
+</head>
+<body>
+
+<!-- 헤더 (Header) -->
+<th:block >
+    <header class="layout-header">
+        <div class="header-container">
+            <div class="logo">
+                <a href="/">OneS</a>
+            </div>
+            <nav class="header-nav">
+                <ul>
+                    <li sec:authorize="isAnonymous()" ><a href="/login">로그인</a></li>
+                    <li sec:authorize="isAuthenticated()" ><a href="/mypage"><span th:text="${UserName}"></span></a></li>
+                    <li sec:authorize="isAuthenticated()" ><a href="/logout">로그아웃</a></li>
+                    <li sec:authorize="isAnonymous()" ><a href="/sign">회원가입</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+</th:block>
+
+<!-- 페이지 콘텐츠 -->
+<main>
+    <th:block th:replace="~{::content}"></th:block>
+        <!-- 콘텐츠 영역 (이곳에 페이지마다 다른 내용을 넣으면 됩니다) -->
+    </div>
+</main>
+
+<!-- 푸터 (Footer) -->
+<th:block >
+    <footer>
+        <div class="footer-container">
+            <p>© 2025 OneS. All rights reserved.</p>
+        </div>
+    </footer>
+</th:block>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery 추가 -->
+<!-- 페이지별 JS 추가 -->
+<th:block th:replace="~{::script}"></th:block>
+</body>
+</html>

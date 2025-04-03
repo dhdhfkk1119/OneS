@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+    </th:block>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a href="#">게시물</a>
+            <a href="#">검색</a>
+            <a href="#">프로필</a>
+        </div>
+    </div>
+
+    <div class="post-create">
+        <form th:action="@{/board}" method="post" th:object="${board}" enctype="multipart/form-data">
+            <div style="display: flex; align-items: center;">
+                <img class="profile-img" src="/images/basci.png" alt="프로필">
+            </div>
+            <div>
+                <input type="text" th:field="*{boardContent}" placeholder="무엇을 작성하시겠습니까?">
+            </div>
+
+            <!-- 이미지 미리보기 슬라이드 -->
+            <div class="image-slider">
+                <button type="button" class="slide-btn left" onclick="slide(-1)">&#10094;</button>
+                <div class="preview-container" id="preview-container"></div>
+                <button type="button" class="slide-btn right" onclick="slide(1)">&#10095;</button>
+            </div>
+
+            <div class="buttons">
+                <input type="file" class="upload-btn" name="files"  onchange="preView(this);" multiple accept="image/*" />
+                <button class="file-btn" onclick="ImgUpload(event)">이미지 선택</button>
+                <button class="submit-btn">작성 완료</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="post">
+        <div class="post-header">
+            <img class="profile-img" src="/images/profile.png" alt="프로필">
+            <div class="user-info">
+                <span>홍길동</span>
+                <span>@hong123</span>
+            </div>
+            <span class="time">5분 전</span>
+        </div>
+        <div class="post-content">
+            오늘 정말 즐거운 하루였어요!
+        </div>
+        <img src="/images/sample.jpg" alt="게시물 이미지">
+        <div class="post-actions">
+            <span class="toggle-comments">💬 10</span>
+            <span>❤️ 25</span>
+            <span>👀 100</span>
+        </div>
+        <div class="comment-section">
+            <div class="comment-input">
+                <img class="profile-img" src="/images/profile.png" alt="프로필">
+            </div>
+
+            <div class="comment-font">
+                <input type="text" placeholder="무엇을 작성하시겠습니까?">
+            </div>
+
+            <!-- 이미지 미리보기 슬라이드 -->
+            <div class="image-slider">
+                <button type="button" class="slide-btn left" onclick="slide(-1)">&#10094;</button>
+                <div class="preview-container" id="coment-container"></div>
+                <button type="button" class="slide-btn right" onclick="slide(1)">&#10095;</button>
+            </div>
+
+            <div class="comment-btn">
+                <input type="file" class="upload-btn commentupload-btn" name="commentfiles"  onchange="preView(this);" multiple accept="image/*" />
+                <button class="file-btn" onclick="CommentImgUpload(event)">이미지 선택</button>
+                <button class="comment-submit">작성</button>
+            </div>
+        </div>
+    </div>
+
+
+</th:block>
+</body>
+</html>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const commentToggles = document.querySelectorAll(".toggle-comments");
+
+        commentToggles.forEach(toggle => {
+            toggle.addEventListener("click", function () {
+                const commentSection = this.closest(".post").querySelector(".comment-section");
+                if (commentSection.style.display === "none" || commentSection.style.display === "") {
+                    commentSection.style.display = "block";
+                } else {
+                    commentSection.style.display = "none";
+                }
+            });
+        });
+    });
+
+    function ImgUpload(event){
+        event.preventDefault(); // 기본 이벤트(폼 제출) 방지
+        document.querySelector(".upload-btn").click();
+    }
+
+    function CommentImgUpload(event) {
+        event.preventDefault();
+        document.querySelector(".commentupload-btn").click();
+    }
+
+
+    // 파일 이미지 preView
+    let postImages = [];  // 게시물 이미지 배열
+    let commentImages = []; // 댓글 이미지 배열
+
+    function preView(input) {
+        const isComment = input.classList.contains("commentupload-btn");
+        const previewContainer = isComment
+            ? document.getElementById("coment-container")
+            : document.getElementById("preview-container");
+
+        let images = isComment ? commentImages : postImages;
+
+        if (input.files.length + images.length > 10) {
+            alert("최대 10장까지만 업로드할 수 있습니다.");
+            return;
+        }
+
+        Array.from(input.files).forEach((file) => {
+            if (!file.type.startsWith("image/")) return;
+
+            images.push(file);
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgWrapper = document.createElement("div");
+                imgWrapper.classList.add("preview-wrapper");
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("preview-img");
+
+                const closeBtn = document.createElement("span");
+                closeBtn.classList.add("preview-close");
+                closeBtn.textContent = "X";
+                closeBtn.onclick = function () {
+                    removeImage(file, isComment);
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(closeBtn);
+                previewContainer.appendChild(imgWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        updateFileInput(isComment);
+    }
+
+    function removeImage(index, isComment) {
+        let images = isComment ? commentImages : postImages;
+        const previewContainer = isComment
+            ? document.getElementById("coment-container")
+            : document.getElementById("preview-container");
+
+        // 배열에서 해당 인덱스의 파일 제거
+        images.splice(index, 1);
+
+        // 새로운 DataTransfer 객체 생성 (파일 인풋 값 업데이트)
+        const dataTransfer = new DataTransfer();
+        images.forEach(file => dataTransfer.items.add(file));
+
+        // 파일 인풋 값 업데이트
+        const fileInput = document.querySelector(isComment ? ".commentupload-btn" : ".upload-btn");
+        fileInput.files = dataTransfer.files;
+
+        // 미리보기 다시 렌더링 (순서 유지)
+        previewContainer.innerHTML = '';
+        images.forEach((file, newIndex) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgWrapper = document.createElement("div");
+                imgWrapper.classList.add("preview-wrapper");
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("preview-img");
+
+                const closeBtn = document.createElement("span");
+                closeBtn.classList.add("preview-close");
+                closeBtn.textContent = "X";
+                closeBtn.onclick = function () {
+                    removeImage(newIndex, isComment);
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(closeBtn);
+                previewContainer.appendChild(imgWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+
+    function updateFileInput(isComment) {
+        const dataTransfer = new DataTransfer();
+        let images = isComment ? commentImages : postImages;
+
+        images.forEach(file => dataTransfer.items.add(file));
+        document.querySelector(isComment ? ".commentupload-btn" : ".upload-btn").files = dataTransfer.files;
+    }
+
+</script>
