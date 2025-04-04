@@ -39,6 +39,10 @@ body {
 }
 
 /* 게시글 작성 영역 */
+.login-message {
+    text-align: center;
+    margin: 0 auto;
+}
 .post-create {
     background-color: white;
     padding: 15px;
@@ -117,8 +121,57 @@ body {
     flex-grow: 1;
     margin-left: 10px;
 }
-
-.post .user-info span {
+.board-img-list {
+    overflow: hidden;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto;
+}
+.board-img-list-inner {
+    display: flex;
+    overflow: hidden;
+    width: 600px;
+    align-items: center;
+}
+.board-img-list-inner button {
+    position: absolute;
+}
+.board-slide-left{
+    z-index: 999;
+    left: 0;
+    border-radius: 15px;
+    font-size: 15px;
+    background-color: rgba(15, 20, 25, 0.75);
+    border: none;
+}
+.board-slide-right{
+    right: 0;
+    z-index: 999;
+    border-radius: 15px;
+    font-size: 15px;
+    background-color: rgba(15, 20, 25, 0.75);
+    border: none;
+}
+.img-list-inner {
+    position: relative;
+    display: inline-block;
+    transition: transform 0.3s ease-in-out; /* 슬라이드 애니메이션 */
+}
+.board-img-list img{
+    width: 275px;
+    height: 275px;
+    margin: 5px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+.user-name {
+    font-weight: 700;
+}
+.user-id{
+    color: #8f8f8f;
+}
+.post{
     display: block;
 }
 
@@ -160,7 +213,6 @@ body {
 .comment-section {
     display: none;
     margin-top: 10px;
-    padding-top: 10px;
     border-top: 1px solid #ddd;
 }
 
@@ -174,7 +226,7 @@ body {
     font-size: 16px;
     outline:none;
 }
-.comment-section button {
+.comment-btn button {
     background-color: #007bff;
     color: white;
     padding: 8px 10px;
@@ -206,7 +258,6 @@ body {
 }
 .preview-container {
     display: flex;
-    overflow: hidden;
     width: 600px;
     align-items: center;
 }
@@ -225,9 +276,19 @@ body {
     font-size: 24px;
     cursor: pointer;
     padding: 5px;
-    display: none;
+    position: absolute;
+    z-index: 999;
 }
-
+.left {
+    left: 0;
+    bottom: 0px;
+    top: 0px;
+}
+.right{
+    right: 0;
+    bottom: 0px;
+    top: 0px;
+}
 .preview-wrapper {
     position: relative;
     display: inline-block;

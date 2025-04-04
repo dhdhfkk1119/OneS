@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,32 +22,37 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public String uploadURL = "C:/Project/OneS/src/main/resources/static/profile-images";
+    public String uploadURL = "C:/Project/OneS/src/main/resources/static/board-images";
 
-    public Board registerBoard(Board board, Long useridx , MultipartFile[] files) throws IOException {
+    // 게시물 등록하기 index 에서
+    public Board registerBoard(Board board, Long useridx, MultipartFile[] files) throws IOException {
         List<String> fileNames = new ArrayList<>();
 
-        for (MultipartFile file : files) {
-            if(file.getSize() <= 0){
-                throw new IOException("파일이 비어 있거나 크기가 0입니다");
+        // files가 null이 아니고, 최소한 하나 이상의 파일이 있을 때만 실행
+        if (files != null && files.length > 0) {
+            for (MultipartFile file : files) {
+                if (!file.isEmpty()) { // 파일이 비어 있지 않을 때만 처리
+                    String originalFileName = file.getOriginalFilename();
+                    String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                    String uuid = UUID.randomUUID().toString();
+                    String newFileName = uuid + "_" + fileExtension;
+                    Path savePath = Paths.get(uploadURL, newFileName);
+
+                    file.transferTo(savePath.toFile());
+                    fileNames.add(newFileName);
+                }
             }
-
-            String OriginalfileName = file.getOriginalFilename();
-            String fileName = OriginalfileName.substring(OriginalfileName.lastIndexOf("."));
-            String uuid = UUID.randomUUID().toString();
-            String newFileName = uuid + "_" + fileName;
-            Path savePath = Paths.get(uploadURL, newFileName);
-
-            file.transferTo(savePath.toFile());
-            fileNames.add(newFileName);
         }
 
-        board.setBoardContent(board.getBoardContent());
         board.setBoardUseridx(useridx);
-        board.setBoardImages(fileNames.isEmpty() ? "" : String.join(",", fileNames));
+        board.setBoardContent(board.getBoardContent());
+        board.setBoardImages(fileNames.isEmpty() ? null : String.join(",", fileNames));
         board.setBoardComent(0L);
         board.setBoardLike(0L);
         board.setBoardAt(LocalDateTime.now());
+        board.setBoardView(0L);
+
         return boardRepository.save(board);
     }
+
 }

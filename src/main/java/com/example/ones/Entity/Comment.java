@@ -13,28 +13,33 @@ import java.time.LocalDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-public class Board {
+public class Comment {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long boardIdx;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long commentIdx;
 
     @Column(nullable = false)
-    private String boardContent;
+    private String commentContent;
 
     @Column(nullable = false)
-    private Long boardUseridx;
+    private String commentImages;
 
     @Column(nullable = false)
-    private Long boardLike;
+    private LocalDateTime commentAt;
 
     @Column(nullable = false)
-    private Long boardComent;
-
-    private String boardImages;
+    private Long commentUseridx;
 
     @Column(nullable = false)
-    private LocalDateTime boardAt = LocalDateTime.now();
+    private Long commentBoardidx;
 
     @Column(nullable = false)
-    private Long boardView;
+    private Long commentLike;
+
+    @Column(nullable = false)
+    private Long commentReply;
+
+    @Column(nullable = false)
+    private Long commentView;
+
 }
