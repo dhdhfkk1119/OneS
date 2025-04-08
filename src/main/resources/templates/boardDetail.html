@@ -11,7 +11,7 @@
 <th:block th:fragment="content">
     <div class="navbar-detail">
         <div class="navbar-inner-detail">
-            <a th:href="@{/}">
+            <a href="javascript:history.back()">
                 <img th:src="@{'/local-images/back.png'}" alt="" width="20px">
                 <span class="user-name"th:text="${writers[boards.boardIdx].userName + '님의'}"></span>
                 <span>게시물</span>

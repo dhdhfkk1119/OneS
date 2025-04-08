@@ -303,6 +303,23 @@ body {
     transition: transform 0.3s ease-in-out;
     white-space: nowrap;
 }
+.board-detail-src {
+    text-align: center;
+    display: flex;
+    padding: 10px 0;
+}
+.board-detail-src a{
+    text-decoration: none;
+    width: 100%;
+    padding: 20px 0;
+    color:#333;
+}
+.board-detail-src a:hover{
+    background-color: #f9f9f9;
+    color: #007bff;
+    border-radius: 10px;
+}
+
 
 /* 이미지 슬라이드 및 preview */
 .image-slider {

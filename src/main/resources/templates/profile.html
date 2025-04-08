@@ -5,155 +5,183 @@
     <title>Title</title>
     <th:block th:fragment="css">
         <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="stylesheet" th:href="@{/css/profile.css}">
     </th:block>
 </head>
 <body>
 <th:block th:fragment="content">
-    <div class="navbar">
-        <div class="navbar-inner">
-            <a href="/">게시물</a>
-            <a href="/">검색</a>
-            <a th:href="@{/profile}">프로필</a>
+    <div class="navbar-detail">
+        <div class="navbar-inner-detail">
+            <a href="javascript:history.back()">
+                <img src="/local-images/back.png" alt="" width="20px">
+                <span class="user-name" th:text="${member.userName + '님의'}"></span>
+                <span>게시물</span>
+            </a>
         </div>
     </div>
 
-    <!-- 게시물 작성하기 -->
-    <div class="post-create">
-        <div  th:if="${#authorization.expression('isAuthenticated()')}">
-            <form th:action="@{/board}" method="post" th:object="${board}" enctype="multipart/form-data">
-                <div style="display: flex; align-items: center;">
-                    <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+    <!-- 현재 로그인한 유저의 정보 -->
+    <div class="post-create my-profile">
+        <div class="profile-header">
+            <!-- 프로필 이미지 -->
+            <div class="profile-image">
+                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필 이미지">
+            </div>
+
+            <!-- 수정 버튼 -->
+            <div class="edit-profile">
+                <button class="edit-btn">프로필 수정</button>
+            </div>
+
+            <!-- 오른쪽 정보 -->
+            <div class="profile-info">
+                <div class="info-top">
+                    <h2 class="username" th:text="${member.userName}"></h2>
+                    <button class="write-btn">게시물 작성</button>
                 </div>
                 <div>
-                    <input type="text" th:field="*{boardContent}" placeholder="무엇을 작성하시겠습니까?">
+                    <span class="userid" th:text="${'@' +member.userId}"></span>
                 </div>
+                <div class="profile-info-two">
+                    <img  th:src="@{'/local-images/calendar.png'}" alt="" width="20px">
+                    <span class="joindate">가입일 :</span>
+                    <span class="joindate" th:text="${#temporals.format(member.userAt, 'yyyy년 MM월')}"></span>
+                </div>
+            </div>
 
-                <!-- 이미지 미리보기 슬라이드 -->
-                <div class="image-slider">
-                    <button type="button" class="slide-btn left">&#10094;</button>
-                    <div class="preview-container" id="preview-container"></div>
-                    <button type="button" class="slide-btn right">&#10095;</button>
-                </div>
 
-                <div class="buttons">
-                    <input type="file" class="upload-btn" name="files"  onchange="preView(this);" multiple accept="image/*" />
-                    <button class="file-btn" onclick="ImgUpload(event)">이미지 선택</button>
-                    <button class="submit-btn">작성 완료</button>
-                </div>
-            </form>
         </div>
-        <div th:if="${#authorization.expression('isAnonymous()')}" class="login-message">
-            <div style="display: flex; align-items: center;">
-                <img class="profile-img" th:src="@{'/profile-images/' + basic.png}" alt="프로필">
-            </div>
-            <div>
-                <input type="text"  placeholder="로그인 후 이용이 가능합니다">
-            </div>
-            <a th:href="@{/login}">로그인 페이지로 이동</a>
+
+        <!-- 탭 메뉴 -->
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="posts">게시물</button>
+            <button class="tab-btn" data-tab="comments">댓글</button>
+            <button class="tab-btn" data-tab="likes">좋아요</button>
         </div>
     </div>
 
     <!-- 게시글 목록 리스트 -->
-    <div class="post" th:each="boards : ${boardList}">
-        <div class="post-header">
-            <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}" alt="프로필">
-            <div class="user-info">
-                <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
-                <span class="user-id" th:text="${'@' +writers[boards.boardIdx].userId}"></span>
-            </div>
-            <span class="time" th:data-time="${boards.boardAt}"></span>
-        </div>
-        <a class="boardDetail" th:href="@{${'/board/' + boards.boardIdx}}">
-            <div class="post-content" th:text="${boards.boardContent}">
-            </div>
-            <div class="board-img-list">
-                <div class="board-img-list-inner">
-                    <button class="board-slide-left">&#10094;</button>
-                    <div class="img-list-inner board-list" th:each="imgUrl : ${boardImages.get(boards.boardIdx)}">
-                        <img th:src="@{${'/board-images/' + imgUrl}}" alt="게시물 이미지">
-                    </div>
-                    <button class="board-slide-right">&#10095;</button>
-                </div>
-            </div>
-        </a>
-        <div class="post-actions">
-            <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
-            <span>
-                <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
-                <span class="board-like-count" th:text="${boards.boardLike}"></span>
-            </span>
-            <span>👀 <span th:text="${boards.boardView}"></span></span>
-        </div>
-        <!--   댓글 창 팝업   -->
-        <div class="comment-section"  th:attr="data-board-id=${boards.boardIdx}">
-            <div class="comment-input" th:if="${#authorization.expression('isAuthenticated()')}">
+    <div class="tab-content" id="posts">
+        <div class="post"  th:each="boards : ${boardList}">
+            <div class="post-header">
                 <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
                 <div class="user-info">
                     <span class="user-name" th:text="${member.userName}"></span>
                     <span class="user-id" th:text="${'@' +member.userId}"></span>
                 </div>
+                <span class="time" th:data-time="${boards.boardAt}"></span>
             </div>
-            <form th:action="@{/comment}" method="post" th:object="${comment}" enctype="multipart/form-data">
-                <input type="hidden" name="from" value="index">
-                <div class="comment-font">
-                    <input type="text" th:field="*{commentContent}" placeholder="무엇을 작성하시겠습니까?">
+            <a class="boardDetail" th:href="@{${'/board/' + boards.boardIdx}}">
+                <div class="post-content" th:text="${boards.boardContent}">
                 </div>
-
-                <!-- 이미지 미리보기 슬라이드 -->
-                <div class="image-slider comment-slider">
-                    <button type="button" class="slide-btn left comment-left" >&#10094;</button>
-                    <div class="preview-container comment-container" id="coment-container"></div>
-                    <button type="button" class="slide-btn right comment-right">&#10095;</button>
-                </div>
-
-                <div class="comment-btn">
-                    <input type="hidden" name="boardidx" th:value="${boards.boardIdx}">
-                    <input type="file" class="upload-btn commentupload-btn"  name="commentfiles" onchange="preView(this);" multiple accept="image/*" />
-                    <button class="file-btn" th:attr="data-board-id=${boards.boardIdx}" onclick="CommentImgUpload(event)">이미지 선택</button>
-                    <button class="comment-submit">작성</button>
-                </div>
-            </form>
-            <!--  댓글 목록 가져오기   -->
-            <div th:each="comment : ${commentList[boards.boardIdx]}" class="comment-bar">
-                <div>
-                    <div class="post-header">
-                        <img class="profile-img" th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}" alt="프로필">
-                        <div class="user-info">
-                            <span class="user-name" th:text="${commentwirtes[comment.commentIdx].userName}"></span>
-                            <span class="user-id" th:text="${'@' +commentwirtes[comment.commentIdx].userId}"></span>
+                <div class="board-img-list">
+                    <div class="board-img-list-inner">
+                        <button class="board-slide-left">&#10094;</button>
+                        <div class="img-list-inner board-list" th:each="imgUrl : ${boardImages.get(boards.boardIdx)}">
+                            <img th:src="@{${'/board-images/' + imgUrl}}" alt="게시물 이미지">
                         </div>
+                        <button class="board-slide-right">&#10095;</button>
                     </div>
-                    <div class="comment-main">
-                        <div class="post-content comment-content" th:text="${comment.commentContent}">
-                        </div>
-                        <div class="board-img-list comment-img-list">
-                            <div class="board-img-list-inner comment-img-list-inner">
-                                <button class="board-slide-left">&#10094;</button>
-                                <div class="comment-img-list-inner-container">
-                                    <div class="img-list-inner" th:each="imgUrl : ${commentImages.get(comment.commentIdx)}">
-                                        <img th:src="@{${'/comment-images/' + imgUrl}}" alt="게시물 이미지">
-                                    </div>
-                                </div>
-                                <button class="board-slide-right">&#10095;</button>
+                </div>
+            </a>
+            <div class="post-actions">
+                <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
+                <span>
+                    <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
+                    <span class="board-like-count" th:text="${boards.boardLike}"></span>
+                </span>
+                <span>👀 <span th:text="${boards.boardView}"></span></span>
+            </div>
+            <!--   댓글 창 팝업   -->
+            <div class="comment-section"  th:attr="data-board-id=${boards.boardIdx}">
+                <div class="comment-input" th:if="${#authorization.expression('isAuthenticated()')}">
+                    <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                    <div class="user-info">
+                        <span class="user-name" th:text="${member.userName}"></span>
+                        <span class="user-id" th:text="${'@' +member.userId}"></span>
+                    </div>
+                </div>
+                <form th:action="@{/comment}" method="post" th:object="${comment}" enctype="multipart/form-data">
+                    <input type="hidden" name="from" value="index">
+                    <div class="comment-font">
+                        <input type="text" th:field="*{commentContent}" placeholder="무엇을 작성하시겠습니까?">
+                    </div>
+
+                    <!-- 이미지 미리보기 슬라이드 -->
+                    <div class="image-slider comment-slider">
+                        <button type="button" class="slide-btn left comment-left" >&#10094;</button>
+                        <div class="preview-container comment-container" id="coment-container"></div>
+                        <button type="button" class="slide-btn right comment-right">&#10095;</button>
+                    </div>
+
+                    <div class="comment-btn">
+                        <input type="hidden" name="boardidx" th:value="${boards.boardIdx}">
+                        <input type="file" class="upload-btn commentupload-btn"  name="commentfiles" onchange="preView(this);" multiple accept="image/*" />
+                        <button class="file-btn" th:attr="data-board-id=${boards.boardIdx}" onclick="CommentImgUpload(event)">이미지 선택</button>
+                        <button class="comment-submit">작성</button>
+                    </div>
+                </form>
+                <!--  댓글 목록 가져오기   -->
+                <div th:each="comment : ${commentList[boards.boardIdx]}" class="comment-bar">
+                    <div>
+                        <div class="post-header">
+                            <img class="profile-img" th:src="@{${'/profile-images/' + commentMember[comment.commentIdx].userImage}}" alt="프로필">
+                            <div class="user-info">
+                                <span class="user-name" th:text="${commentMember[comment.commentIdx].userName}"></span>
+                                <span class="user-id" th:text="${'@' +commentMember[comment.commentIdx].userId}"></span>
                             </div>
                         </div>
-                        <div class="post-actions">
-                            <span class="toggle-comments">💬 <span th:text="${comment.commentRelay}"></span></span>
-                            <span>
-                                <span class="comment-like-btn" th:data-comment-idx="${comment.commentIdx}">❤️</span>
-                                <span class="comment-like-count" th:text="${comment.commentLike}"></span>
-                            </span>
-                            <span>👀 <span th:text="${comment.commentView}"></span></span>
+                        <div class="comment-main">
+                            <div class="post-content comment-content" th:text="${comment.commentContent}">
+                            </div>
+                            <div class="board-img-list comment-img-list">
+                                <div class="board-img-list-inner comment-img-list-inner">
+                                    <button class="board-slide-left">&#10094;</button>
+                                    <div class="comment-img-list-inner-container">
+                                        <div class="img-list-inner" th:each="imgUrl : ${commentImages.get(comment.commentIdx)}">
+                                            <img th:src="@{${'/comment-images/' + imgUrl}}" alt="게시물 이미지">
+                                        </div>
+                                    </div>
+                                    <button class="board-slide-right">&#10095;</button>
+                                </div>
+                            </div>
+                            <div class="post-actions">
+                                <span class="toggle-comments">💬 <span th:text="${comment.commentRelay}"></span></span>
+                                <span>
+                                    <span class="comment-like-btn" th:data-comment-idx="${comment.commentIdx}">❤️</span>
+                                    <span class="comment-like-count" th:text="${comment.commentLike}"></span>
+                                </span>
+                                <span>👀 <span th:text="${comment.commentView}"></span></span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="board-detail-src">
-                <a th:href="@{${'/board/' + boards.boardIdx}}">댓글 더보기</a>
             </div>
         </div>
     </div>
+
+    <div class="tab-content" id="comments">
+        <div class="post" th:each="userComment : ${userComment}">
+            <span th:text="${'댓글 :' + userComment.commentContent}"></span>
+            <span th:text="${'게시물 :' + userCommentBoard[userComment.commentIdx].boardContent}"></span>
+            <span th:text="${commentboardWriter[userComment.commentIdx].userName}">작성자</span>
+            <div th:each="img : ${usercommentImages[userComment.commentIdx]}">
+                <img th:src="@{'/board-images/' + ${img}}" alt="댓글 게시물 이미지" />
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-content" id="likes">
+        <div class="post"  th:each="like : ${userLike}">
+            <span th:text="${like.getLikeBoardidx()}"></span>
+            <span th:text="${userboardLike[like.likeBoardidx].boardContent}"></span>
+            <span th:text="${likeboardWriter[like.likeIdx].userName}"></span>
+            <div th:each="img : ${likeboardImages[like.likeBoardidx]}">
+                <img th:src="@{'/board-images/' + ${img}}" alt="좋아요 게시물 이미지" />
+            </div>
+        </div>
+    </div>
+
 </th:block>
 </body>
 </html>
@@ -295,7 +323,6 @@
         updateFileInput(isComment, boardId); // ✨ boardId 넘기기
     }
 
-
     // 게시물 이미지 삭제 및 댓글 이미지 삭제
     function removeImage(index, isComment, boardId = null) {
         let images = isComment ? commentImagesMap[boardId] : postImages;
@@ -370,7 +397,6 @@
         }
     }
 
-
     // 게시물 이미지 슬라이드
     document.addEventListener("DOMContentLoaded", function () {
         const sliders = document.querySelectorAll(".board-img-list-inner");
@@ -416,43 +442,6 @@
             updateSlide();
         });
     });
-
-    // 게시글 작성 이미지 슬라이드
-    function initBoardSlider() {
-        const sliders = document.querySelector(".image-slider");
-        const imgContainer = sliders.querySelector(".preview-container");
-        const images = Array.from(imgContainer.querySelectorAll(".preview-wrapper"));
-        const leftBtn = sliders.querySelector(".left");
-        const rightBtn = sliders.querySelector(".right");
-        const imgWidth = 285;
-        let currentIndex = 0;
-
-        const maxIndex = Math.max(images.length - 2, 0); // ✅ 항상 0 이상으로
-
-        function updateSlide() {
-            const offset = -(currentIndex * imgWidth);
-            imgContainer.style.transform = `translateX(${offset}px)`;
-
-            leftBtn.style.display = currentIndex > 0 ? 'block' : 'none';
-            rightBtn.style.display = currentIndex < maxIndex ? 'block' : 'none';
-        }
-
-        leftBtn.onclick = function () {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateSlide();
-            }
-        };
-
-        rightBtn.onclick = function () {
-            if (currentIndex < maxIndex) {
-                currentIndex++;
-                updateSlide();
-            }
-        };
-
-        updateSlide();
-    }
 
     // 댓글 작성 이미지 슬라이드
     function initComentSlider() {
@@ -558,7 +547,6 @@
         });
     });
 
-
     // 게시물 찜하기 기능
     document.addEventListener("DOMContentLoaded",function (){
         const btns = document.querySelectorAll(".boardLike-btn");
@@ -567,47 +555,47 @@
             const boardIdx = btn.dataset.boardIdx;
             const likeCountSpan = btn.parentElement.querySelector(".board-like-count");
 
-               fetch(`/board/like-status/${boardIdx}`,{
-                  method: "GET",
-                  headers: {
-                      "Content-Type" : "application/json"
-                  }
-               })
-                   .then(response => response.json())
-                   .then(data => {
-                      if(data.status === "liked"){
-                          btn.textContent = "❤️";
-                          likeCountSpan.textContent = data.likeCount;
-                      } else if(data.status === "not_liked"){
-                          btn.textContent = "🖤";
-                          likeCountSpan.textContent = data.likeCount;
-                      }
-                   })
-                   .catch(error => console.error("Error :", error));
+            fetch(`/board/like-status/${boardIdx}`,{
+                method: "GET",
+                headers: {
+                    "Content-Type" : "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === "liked"){
+                        btn.textContent = "❤️";
+                        likeCountSpan.textContent = data.likeCount;
+                    } else if(data.status === "not_liked"){
+                        btn.textContent = "🖤";
+                        likeCountSpan.textContent = data.likeCount;
+                    }
+                })
+                .catch(error => console.error("Error :", error));
 
-               btn.addEventListener("click",function (){
-                  fetch(`/board/like/${boardIdx}`, {
-                     method: "POST",
-                     headers: {
-                         "Content-Type":"application/json"
-                     }
-                  })
-                  .then(response => {
-                      if(response.status === 401){
-                          alert("로그인을 해주시기 바랍니다");
-                      }
-                      return response.json();
-                  })
-                  .then(data => {
-                     if(data.status === "added"){
-                         btn.textContent = "❤️";
-                         likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                     } else if(data.status === "removed"){
-                         btn.textContent = "🖤";
-                         likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
-                     }
-                  })
-                  .catch(error => console.error("Error :", error));
+            btn.addEventListener("click",function (){
+                fetch(`/board/like/${boardIdx}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":"application/json"
+                    }
+                })
+                    .then(response => {
+                        if(response.status === 401){
+                            alert("로그인을 해주시기 바랍니다");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if(data.status === "added"){
+                            btn.textContent = "❤️";
+                            likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
+                        } else if(data.status === "removed"){
+                            btn.textContent = "🖤";
+                            likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
+                        }
+                    })
+                    .catch(error => console.error("Error :", error));
             });
         });
     });
@@ -665,4 +653,15 @@
         });
     });
 
+
+    document.querySelectorAll(".tab-btn").forEach(button => {
+        button.addEventListener("click", () => {
+            document.querySelectorAll(".tab-btn").forEach(btn => btn.classList.remove("active"));
+            document.querySelectorAll(".tab-content").forEach(content => content.style.display = "none");
+
+            button.classList.add("active");
+            const target = button.getAttribute("data-tab");
+            document.getElementById(target).style.display = "block";
+        });
+    });
 </script>

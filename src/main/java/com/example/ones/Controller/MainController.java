@@ -55,7 +55,7 @@ public class MainController {
 
         Map<Long,List<Comment>> boardComments = new HashMap<>(); // 각 게시물에 달린 댓글 정보 가져오기
         Map<Long,Member> CommentsMembers = new HashMap<>(); // 댓글을 작성한 유저의 정보를 가져오기
-        Map<Long,List<String>> CommentImages = new HashMap<>(); // 댓글 정보인 이미지를 , 로 가져오기
+        Map<Long,List<String>> CommentImages = new HashMap<>(); // 댓글에 달린 유저 정보인 이미지를 , 로 가져오기
 
 
 
