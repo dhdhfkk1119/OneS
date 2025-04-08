@@ -14,7 +14,9 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
+
+
     // 아이디 중복 체크
     public Boolean isIdCheck(String userid){
         return memberRepository.existsByUserId(userid);

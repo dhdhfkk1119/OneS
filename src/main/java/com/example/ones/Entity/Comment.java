@@ -37,9 +37,9 @@ public class Comment {
     private Long commentLike;
 
     @Column(nullable = false)
-    private Long commentReply;
+    private Long commentView;
 
     @Column(nullable = false)
-    private Long commentView;
+    private Long commentRelay;
 
 }

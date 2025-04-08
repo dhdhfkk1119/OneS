@@ -34,8 +34,17 @@ public class MemberDTO {
     @NotEmpty(message = "전화번호를 입력해주세요")
     private String userPhoneNumber;
 
+    @NotEmpty(message = "우편번호를 입력해주세요")
+    private String address; //우편번호
+    @NotEmpty(message = "기본 주소를 입력해주세요")
+    private String addressDefault; // 기본주소
+    @NotEmpty(message = "상세 주소를 입력해주세요")
+    private String addressDetail; // 상세주소 동호수
+
     @NotEmpty(message = "주소를 입력해주세요")
-    private String userAddress;
+    public String getUserAddress() {
+        return address + "/" +  addressDefault + "/" + addressDetail;
+    }
 
     @NotEmpty(message = "이메일을 입력해주세요")
     private String userEmail;

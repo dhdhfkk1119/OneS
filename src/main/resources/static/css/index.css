@@ -38,6 +38,38 @@ body {
     color: #007bff;
 }
 
+/*  Detail Css */
+
+.navbar-detail {
+    display: flex;
+    justify-content: center; /* 중앙 정렬 */
+    align-items: center;
+    padding: 5px 0;
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+}
+.navbar-detail a {
+    display: flex;         /* Flex로 전환 */
+    align-items: center;   /* 세로 중앙 정렬 */
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    gap: 8px;              /* 아이템 간격 */
+    flex: 1;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+    padding: 10px 0;
+}
+.navbar-detail a:hover {
+    color: #007bff;
+}
+.navbar-inner-detail {
+    justify-content: space-between; /* 왼쪽, 중앙, 오른쪽 정렬 */
+    align-items: center;
+    width: 600px; /* post-create, post와 같은 크기로 설정 */
+    margin: 0 auto;
+}
+
 /* 게시글 작성 영역 */
 .login-message {
     text-align: center;
@@ -126,7 +158,7 @@ body {
     position: relative;
     align-items: center;
     justify-content: center;
-    margin: 10px auto;
+    margin: 0 auto;
 }
 .board-img-list-inner {
     display: flex;
@@ -136,6 +168,11 @@ body {
 }
 .board-img-list-inner button {
     position: absolute;
+}
+.board-img-list-inner-container{
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+    white-space: nowrap;
 }
 .board-slide-left{
     z-index: 999;
@@ -155,8 +192,9 @@ body {
 }
 .img-list-inner {
     position: relative;
-    display: inline-block;
     transition: transform 0.3s ease-in-out; /* 슬라이드 애니메이션 */
+    display: inline-block;
+
 }
 .board-img-list img{
     width: 275px;
@@ -183,6 +221,7 @@ body {
 .post-content {
     margin-top: 10px;
     font-size: 16px;
+    margin-left: 5px;
 }
 
 .post img {
@@ -222,6 +261,10 @@ body {
     border: none;
     margin: 10px 0;
 }
+.comment-main {
+    width: 80%;
+    margin: 0 auto;
+}
 .comment-font input {
     font-size: 16px;
     outline:none;
@@ -242,11 +285,24 @@ body {
     right: 0;
 }
 .comment-input {
+    align-items : center;
     display: flex;
     font-size: 16px;
     margin: 10px 0;
 }
-
+.comment-content {
+    margin-top: 0;
+}
+.comment-bar{
+    margin-top: 17px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+}
+.comment-img-list-inner-container {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+    white-space: nowrap;
+}
 
 /* 이미지 슬라이드 및 preview */
 .image-slider {
@@ -260,6 +316,7 @@ body {
     display: flex;
     width: 600px;
     align-items: center;
+    transition: transform 0.3s ease-in-out;
 }
 
 .preview-img {
@@ -305,4 +362,8 @@ body {
     padding: 2px 5px;
     cursor: pointer;
     border-radius: 50%;
+}
+.boardDetail {
+    text-decoration: none;
+    color:black;
 }
