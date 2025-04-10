@@ -64,4 +64,10 @@ public class MemberDTO {
     @Column(nullable = false)
     private String userStatus = "disconnect";
 
+    @Column(nullable = false)
+    private Long follow;
+
+    @Column(nullable = false)
+    private Long following;
+
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.lang.reflect.Array;
 import java.security.Principal;
@@ -27,12 +28,21 @@ public class ProfileController {
     private final CommentRepository commentRepository;
     private final BoardLikeRepository boardLikeRepository;
 
-    @GetMapping("/profile")
-    public String profile(Model model, Principal principal) {
+    @GetMapping("/profile/{memberIdx}")
+    public String profile(Model model, @PathVariable Long memberIdx, Principal principal) {
 
-        String username = principal.getName();
-        Member member = memberRepository.findByUserId(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        // 현재 로그인한 유저의 정보를 가져오기
+        Member memberlogin = null;
+        if (principal != null) {
+            String username = principal.getName();
+            memberlogin = memberRepository.findByUserId(username)
+                    .orElseThrow(() -> new RuntimeException("유저 정보를 찾을 수 없습니다"));
+        }
+
+        // 게시물 작성한 사람의 유저 정보
+        Member member = memberRepository.findByIdx(memberIdx)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+
 
 
         // 자신이 작성한 게시물에 대한 API
@@ -45,6 +55,9 @@ public class ProfileController {
         Map<Long,Board> UserboardLikeMap = new HashMap<>();// 자신이 좋아요를 누른 게시물에 정보를 가져옴
         Map<Long, Member> UserboardMemberMap = new HashMap<>(); // 좋아요 누른 게시물에 대한 작성자 정보
         Map<Long,List<String>> likeboardImagesMap = new HashMap<>(); // 좋아요 누른 게시물에 이미지 , 구분해서 가져오기
+        Map<Long,List<Comment>> likeboardCommentMap = new HashMap<>(); // 좋아요 누른 게시물에 댓글 가져오기
+        Map<Long,List<String>> likeboardCommentImagesMap = new HashMap<>(); // 좋아요 누른 게시물에 댓글 이미지 가져오기
+        Map<Long,Member> likeboardCommentMemberMap = new HashMap<>(); // 좋아요 누른 게시물에 댓글 작성자 가져오기
 
         // 댓글 section 부분
         Map<Long,Board> UsercommentBoardMap = new HashMap<>();// 자신이 게시물에 단 댓글 게시물 가져오기
@@ -52,8 +65,9 @@ public class ProfileController {
         Map<Long,List<String>> commentboardImagesMap = new HashMap<>(); // 댓글단 게시물에 이미지 , 구분해서 가져오기
         Map<Long,List<String>> usercommentImagesMap = new HashMap<>(); // 유저가 단 댓글에 이미지 , 구분해서 가져오기
         List<Comment> userComments = commentRepository.findByCommentUseridx(member.getIdx()); // 현재 로그인한 유저가 단 댓글을 가져옴
-
         List<Board_like> boardLikeList = boardLikeRepository.findByLikeUseridx(member.getIdx()); // 현재 로그인한 유저가 좋아요 누른 게시물
+
+        Map<Board, List<Comment>> userCommentsGroupedByBoard = new LinkedHashMap<>(); // 댓글 단 게시물에 중복 리스트 하나로 합치기 (그룹화)
 
         // 좋아요 누른 게시물 정보 받아오기
         for (Board_like boardLike : boardLikeList) {
@@ -72,14 +86,34 @@ public class ProfileController {
                         }
 
                         likeboardImagesMap.put(boardLike.getLikeBoardidx(), images);
+
+                        List<Comment> comments = commentRepository.findByCommentBoardidx(board.getBoardIdx());
+                        likeboardCommentMap.put(boardLike.getLikeBoardidx(), comments);
+
+
+                        for (Comment comment : comments){
+                            List<String> commentimages = new ArrayList<>();
+                            if (comment.getCommentImages() != null && !comment.getCommentImages().isEmpty()) {
+                                commentimages = Arrays.asList(comment.getCommentImages().split(","));
+                            }
+                            likeboardCommentImagesMap.put(comment.getCommentIdx(), commentimages);
+
+                            Member member1 = memberRepository.findByIdx(comment.getCommentUseridx()).orElseThrow(() -> new RuntimeException("User not found"));
+                            likeboardCommentMemberMap.put(comment.getCommentIdx(), member1);
+                        }
+
                     });
 
         }
+        
         // 댓글단 게시물 정보 받아오기
         for(Comment comment : userComments) {
             boardRepository.findByBoardIdx(comment.getCommentBoardidx())
                     .ifPresent(board -> {
-                        UsercommentBoardMap.put(comment.getCommentIdx(), board);
+                        // 이미 board가 있으면 기존 리스트에 추가, 없으면 새 리스트 생성
+                        userCommentsGroupedByBoard
+                                .computeIfAbsent(board, k -> new ArrayList<>())
+                                .add(comment);
 
                         // 게시물에 대한 작성자 정보 가져오기
                         Long boardWriteidx = board.getBoardUseridx();
@@ -104,7 +138,7 @@ public class ProfileController {
         }
 
 
-
+        // 현재 로그인한 유저의 게시물 가져오기
         List<Board> board = boardRepository.findByBoardUseridx(member.getIdx());
         for(Board boardOpt : board) {
             List<Comment> comments = commentRepository.findByCommentBoardidx(boardOpt.getBoardIdx());
@@ -133,9 +167,11 @@ public class ProfileController {
         model.addAttribute("commentList", commentMap); // 게시물에 대한 댓글 정보 가져오기
         model.addAttribute("commentImages", commentImagesMap); // 댓글에 대한 이미지 정보 가져오기
         model.addAttribute("boardImages", boardImagesMap); // 게실에 대한 이미지 정보 가져오기
-        model.addAttribute("member", member); // 현재 로그인한 유저의 정보 가져오기
+        model.addAttribute("member", member); // 게시물을 작성한 유저의 정보를 가져오기 
+        model.addAttribute("loginMember",memberlogin); // 현재 로그인안 유저의 정보
         model.addAttribute("commentMember", commentMemberMap); // 댓글단 유저의 정보 가져오기
         model.addAttribute("comment",new Comment()); // 댓글 작성 객체 만들기
+        model.addAttribute("board",new Board()); // 게시글 작성 객체 만들기
 
         model.addAttribute("userLike",boardLikeList); // 유저가 좋아요 누른 목록
         model.addAttribute("userboardLike",UserboardLikeMap); // 좋아요 누른 게시물
@@ -144,9 +180,13 @@ public class ProfileController {
         model.addAttribute("likeboardWriter",UserboardMemberMap); // 자신이 좋아요 누른 게시물에 작성자 정보
         model.addAttribute("commentboardWriter",UsercommentMemberMap); // 자신이 댓글을 단 게시물에 작성자 정보 
         model.addAttribute("commentboardImages", commentboardImagesMap); // 댓글단 게시물에 이미지 정보
-        model.addAttribute("usercommentImages", usercommentImagesMap); // 로그인 유저가 단 댓글의 이미지 정보
+        model.addAttribute("usercommentImages", usercommentImagesMap); // 자신이 단 댓글의 이미지 정보
         model.addAttribute("likeboardImages", likeboardImagesMap); // 좋아요 누른 게시물 이미지 정보
-        
+        model.addAttribute("userCommentMap", userCommentsGroupedByBoard); // 댓글단 게시물의 정보 가져오기(반복이 있으면 하나만 그룹화)
+
+        model.addAttribute("likeboardComment",likeboardCommentMap); // 자신이 좋아요 누른 게시물의 댓글을 가져오기
+        model.addAttribute("likeboardCommentImages",likeboardCommentImagesMap); // 자신이 누른 좋아아요 게시물의 이미지 , 구분하기
+        model.addAttribute("likeboardCommentMember",likeboardCommentMemberMap); // 자신이 누른 좋아요의 게시물에 댓글에 작성자를 가져오기
         return "profile";
 
     }

@@ -51,6 +51,8 @@ public class MemberService {
         member.setUserPoint(200L); // 기본 포인트 값 설정
         member.setUserAction("In-progress");
         member.setUserStatus("disconnect");
+        member.setFollow(0L);
+        member.setFollowing(0L);
 
         return memberRepository.save(member);
     }

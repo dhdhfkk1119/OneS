@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="kr" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="stylesheet" th:href="@{/css/message.css}">
+    </th:block>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="message-container">
+        <!-- 1. Profile Info -->
+        <div class="profile-info">
+            <div class="nav-item">홈</div>
+            <div class="nav-item">탐색하기</div>
+            <div class="nav-item">알림</div>
+            <div class="nav-item">쪽지</div>
+            <div class="nav-item">프로필</div>
+            <div class="nav-item">게시하기</div>
+
+            <div class="bottom-profile">
+                <img src="/profile-images/basic.png" alt="프로필">
+                <div>
+                    <div class="bottom-name">홍길동</div>
+                    <div class="bottom-id">@hong123</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Message List -->
+        <div class="message-list">
+            <div class="message-header">
+                <span>쪽지</span>
+                <button style="float:right;">메세지 추가하기</button>
+            </div>
+            <input type="text" placeholder="쪽지 검색하기" class="message-list-input">
+            <div class="message-items">
+                <!-- 반복 렌더링 되는 쪽지 리스트 -->
+                <div class="message-item">김철수</div>
+                <div class="message-item">이영희</div>
+                <!-- ... -->
+            </div>
+        </div>
+
+        <!-- 3. Message Detail -->
+        <div class="message">
+            <div class="user-details">
+                <img src="/profile-images/basic.png" alt="유저 이미지" class="user-details-img">
+                <div>이영희</div>
+                <div>@younghee92</div>
+                <div>안녕하세요~ 잘 지내시죠?</div>
+                <div class="user-calendar">
+                    <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
+                    <span>가입일: 2022-05-20</span>
+                </div>
+                <div>팔로워: 512명</div>
+                <div>팔로잉 상태: 서로 팔로우 중</div>
+            </div>
+
+            <div style="height: 300px;"></div> <!-- 여백 -->
+
+            <div class="message-compose">
+                <div class="compose-input">
+                    <label for="imageUpload" style="cursor: pointer;">😊</label>
+                    <input type="file" id="imageUpload" style="display: none;">
+                    <input type="text" placeholder="새 쪽지 작성하기">
+                    <button>보내기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

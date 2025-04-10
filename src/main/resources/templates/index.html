@@ -13,7 +13,11 @@
         <div class="navbar-inner">
             <a href="/">게시물</a>
             <a href="/">검색</a>
-            <a th:href="@{/profile}">프로필</a>
+            <a class="profile-src"
+               onclick="ProfileBtn(event)"
+               th:data-idx="${member != null} ? ${member.idx} : ''">
+                프로필
+            </a>
         </div>
     </div>
 
@@ -23,6 +27,10 @@
             <form th:action="@{/board}" method="post" th:object="${board}" enctype="multipart/form-data">
                 <div style="display: flex; align-items: center;">
                     <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                    <div class="user-info" style="margin-left: 10px">
+                        <span class="user-name" th:text="${member.userName}"></span>
+                        <span class="user-id" th:text="${'@' +member.userId}"></span>
+                    </div>
                 </div>
                 <div>
                     <input type="text" th:field="*{boardContent}" placeholder="무엇을 작성하시겠습니까?">
@@ -56,7 +64,9 @@
     <!-- 게시글 목록 리스트 -->
     <div class="post" th:each="boards : ${boardList}">
         <div class="post-header">
-            <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}" alt="프로필">
+            <a th:href="@{'/profile/' + ${writers[boards.boardIdx].idx}}">
+                <img class="profile-img" th:src="@{'/profile-images/' + ${writers[boards.boardIdx].userImage}}" alt="프로필">
+            </a>
             <div class="user-info">
                 <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
                 <span class="user-id" th:text="${'@' +writers[boards.boardIdx].userId}"></span>
@@ -84,6 +94,7 @@
             </span>
             <span>👀 <span th:text="${boards.boardView}"></span></span>
         </div>
+
         <!--   댓글 창 팝업   -->
         <div class="comment-section"  th:attr="data-board-id=${boards.boardIdx}">
             <div class="comment-input" th:if="${#authorization.expression('isAuthenticated()')}">
@@ -117,7 +128,9 @@
             <div th:each="comment : ${commentList[boards.boardIdx]}" class="comment-bar">
                 <div>
                     <div class="post-header">
-                        <img class="profile-img" th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}" alt="프로필">
+                        <a th:href="@{${'/profile/' + commentwirtes[comment.commentIdx].idx}}">
+                            <img class="profile-img" th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}" alt="프로필">
+                        </a>
                         <div class="user-info">
                             <span class="user-name" th:text="${commentwirtes[comment.commentIdx].userName}"></span>
                             <span class="user-id" th:text="${'@' +commentwirtes[comment.commentIdx].userId}"></span>
@@ -158,6 +171,18 @@
 </body>
 </html>
 <script th:inline="javascript">
+
+    // 이미지 슬라이 버튼 클릭시 a 태그로 가는 이동 막기
+    document.querySelectorAll('.board-slide-left, .board-slide-right')
+        .forEach(btn => {
+            btn.addEventListener('click', function(event) {
+                event.preventDefault();      // a 태그 이동 막기
+                event.stopPropagation();    // 부모 요소로 이벤트 전파도 막기
+
+                // 슬라이드 로직 실행
+                console.log("슬라이드 버튼 클릭!");
+            });
+        });
 
     // 댓글 창 열기 토글
     document.addEventListener("DOMContentLoaded", function () {
@@ -231,6 +256,20 @@
         fileInput.click(); // input 클릭해서 파일 선택창 열기
     }
 
+    // Profile 화면으로 넘어가기
+    function ProfileBtn(event) {
+        event.preventDefault(); // 기본 이동 막기
+
+        const isLoggedIn = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
+
+        if (!isLoggedIn) {
+            alert("로그인 해주세요");
+            window.location.href = "/login"; // 로그인 페이지로 이동
+        } else {
+            const idx = event.currentTarget.getAttribute("data-idx");
+            window.location.href = `/profile/${idx}`; // member.idx 포함해서 이동
+        }
+    }
 
     // 게시물 preView 및 댓글 preView
     let postImages = [];  // 게시물 이미지 배열
@@ -664,5 +703,9 @@
             });
         });
     });
+
+
+
+    // 팔로우 팔로잉 체크하기
 
 </script>

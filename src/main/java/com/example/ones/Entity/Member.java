@@ -53,4 +53,10 @@ public class Member {
 
     @Column(nullable = false)
     private String userStatus;
+
+    @Column(nullable = false)
+    private Long follow;
+
+    @Column(nullable = false)
+    private Long following;
 }

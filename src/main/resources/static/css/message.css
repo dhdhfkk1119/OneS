@@ -1,0 +1,127 @@
+.message-container {
+    display: flex;
+    height: 96vh;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.profile-info {
+    width: 15%;
+    border-right: 1px solid #ccc;
+    padding: 20px 0;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.message-list {
+    width: 30%;
+    border-right: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.message {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100%;
+    overflow: hidden;
+}
+
+.message-list-input {
+    width: 100%;
+    padding: 8px 0 ;
+    margin-bottom: 10px;
+    text-indent: 10px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+}
+
+.nav-item {
+    margin-bottom: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.bottom-profile {
+    position: absolute;
+    bottom: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.bottom-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.bottom-name{
+    text-align: left;
+    font-weight: 700;
+}
+.bottom-id {
+    color:#ccc;
+}
+.user-details {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ccc;
+    margin: 0;
+    text-align: center;
+}
+.user-calendar {
+    display: flex;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+.user-details-calendar{
+    width: 20px;
+    height: 20px;
+}
+.user-details-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.user-details div {
+    margin-bottom: 5px;
+}
+.message-header,
+.message-compose {
+    padding: 15px 0;
+}
+
+.message-compose {
+    width: 100%;
+}
+
+.message-items {
+    padding-top: 5px;
+    border-top: 1px solid #ccc;
+}
+
+.compose-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.compose-input input {
+    border: 1px solid #ccc;
+    flex: 1;
+    padding: 8px;
+    text-indent: 10px;
+
+}
+.compose-input button {
+    border: 1px solid #ccc;
+    padding: 8px 16px;
+}
