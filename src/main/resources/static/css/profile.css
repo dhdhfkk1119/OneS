@@ -24,6 +24,12 @@
 }
 .profile-info-two {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+.profile-info-inner {
+    display: flex;
     align-items: center;
     padding: 5px 0;
 }
@@ -63,6 +69,92 @@
 .edit-btn:hover, .write-btn:hover {
     background-color: #0056b3;
 }
+.follow-inner {
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 700;
+}
+.follow-inner a {
+    text-decoration: none;
+    color:#333;
+}
+.follow-inner a:hover{
+    border-bottom: 1px solid #333;
+    color:#333;
+}
+.following {
+    margin-left: 15px;
+}
+
+.delete-section {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+}
+
+.delete-section-inner {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;   /* 수평 가운데 정렬 */
+    border-radius: 50%;        /* 원 모양 */
+    transition: background 0.2s ease;
+}
+
+.delete-section-inner:hover {
+    background: #666666;
+    cursor: pointer;
+}
+
+.delete-span {
+    font-size: 16px;
+    color: #efefef;
+    transition: color 0.2s ease;
+}
+
+.delete-section-inner:hover .delete-span {
+    color: #fff; /* hover 시 텍스트 색상 변경 */
+}
+.delete-form {
+    position: absolute;
+    top: 10px;
+    right: 55px; /* ... 버튼 기준 왼쪽 */
+    width: 0;
+    height: 32px;
+    overflow: hidden;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    background: white;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: width 0.3s ease;
+    white-space: nowrap;
+    padding: 5px 10px;
+    opacity: 0;
+}
+
+.delete-form.show {
+    width: 140px;
+    opacity: 1;
+}
+
+.delete-form span {
+    color: red;
+    transition: background 0.2s ease, color 0.2s ease;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.delete-form span:hover {
+    background-color: #444;
+    color: #fff;
+    cursor: pointer;
+}
+
 
 .profile-tabs {
     margin-top: 20px;
@@ -83,3 +175,59 @@
     border-bottom: 3px solid #007bff;
     color: #007bff;
 }
+.board-line-bar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.post-actions {
+    width: 70%;
+}
+.board-isEmpty {
+    padding: 20px 0;
+    font-weight: 700;
+    font-size: 16px;
+    color: #333;
+    margin: 0 auto;
+    text-align: center;
+}
+.profile-actions-comments {
+    width: 85%;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: gray;
+    font-size: 14px;
+}
+.profile-actions-comments span{
+    cursor: pointer;
+}
+.profile-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+    color: gray;
+    font-size: 14px;
+}
+.profile-actions span{
+    cursor: pointer;
+}
+.user-name {
+    margin-left: 10px;
+}
+.comment-all:hover {
+    background: #f8f8f8;
+    border-radius: 10px;
+}
+.comment-line-bar {
+    border-left: 5px solid #dddd;
+    margin-left: 22px;
+    padding-left: 35px;
+}
+#comments{
+    display: none;
+}
+#likes {
+    display: none;
+}
+

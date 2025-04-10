@@ -151,7 +151,7 @@ body {
 
 .post .user-info {
     flex-grow: 1;
-    margin-left: 10px;
+    margin-left: 5px;
 }
 .board-img-list {
     overflow: hidden;
