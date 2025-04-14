@@ -16,7 +16,10 @@ body{
     box-sizing: border-box;
     position: relative;
 }
-
+.profile-info a{
+    text-decoration: none;
+    color: black;
+}
 .message-list {
     width: 30%;
     border-right: 1px solid #ccc;
@@ -45,12 +48,27 @@ body{
 }
 
 .nav-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    border-radius: 30px;
+    transition: background 0.2s ease;
     margin-bottom: 15px;
-    font-weight: bold;
     cursor: pointer;
+    margin-right: 15px;
     font-size: 20px;
+    font-weight: bold;
+    justify-items: center;
 }
-.nav-item:hover{
+.nav-item img {
+    width: 20px;
+    margin-right: 10px; /* 아이콘과 텍스트 사이 간격 */
+    vertical-align: middle; /* 텍스트랑 수직 정렬 */
+}
+.nav-item span {
+    vertical-align: middle;
+}
+.nav-item:hover {
     background: rgba(204, 204, 204, 0.5);
 }
 .bottom-profile {

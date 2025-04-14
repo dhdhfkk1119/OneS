@@ -5,6 +5,7 @@
     <title>Title</title>
     <th:block th:fragment="css">
         <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="stylesheet" th:href="@{/css/message.css}">
     </th:block>
 </head>
 <body>
@@ -20,7 +21,6 @@
             </a>
         </div>
     </div>
-
     <!-- 게시물 작성하기 -->
     <div class="post-create">
         <div  th:if="${#authorization.expression('isAuthenticated()')}">

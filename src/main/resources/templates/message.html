@@ -13,12 +13,42 @@
     <div class="message-container">
         <!-- 1. Profile Info -->
         <div class="profile-info">
-            <div class="nav-item">홈</div>
-            <div class="nav-item">탐색하기</div>
-            <div class="nav-item">알림</div>
-            <div class="nav-item">쪽지</div>
-            <div class="nav-item">프로필</div>
-            <div class="nav-item">게시하기</div>
+            <a href="/">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/home-icon.png'}" alt="">
+                    <span>홈</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/search-message.png'}" alt="">
+                    <span>탐색하기</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/alarm-clock.png'}" alt="">
+                    <span>알림</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/email.png'}" alt="">
+                    <span>쪽지</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/profile-user.png'}" alt="">
+                    <span>프로필</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/write.png'}" alt="">
+                    <span>작성하기</span>
+                </div>
+            </a>
 
             <div class="bottom-profile">
                 <img src="/profile-images/basic.png" alt="프로필">
@@ -63,7 +93,9 @@
 
             <div class="message-compose">
                 <div class="compose-input">
-                    <label for="imageUpload" style="cursor: pointer;">😊</label>
+                    <label for="imageUpload" style="cursor: pointer;display: flex">
+                        <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
+                    </label>
                     <input type="file" id="imageUpload" style="display: none;">
                     <input type="text" placeholder="새 쪽지 작성하기">
                     <button>보내기</button>
