@@ -59,4 +59,6 @@ public class Member {
 
     @Column(nullable = false)
     private Long following;
+
+    private String introduce;
 }

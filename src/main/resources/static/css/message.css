@@ -1,3 +1,6 @@
+body{
+    background: white;
+}
 .message-container {
     display: flex;
     height: 96vh;
@@ -9,7 +12,7 @@
     width: 15%;
     border-right: 1px solid #ccc;
     padding: 20px 0;
-    text-align: center;
+    text-align: left;
     box-sizing: border-box;
     position: relative;
 }
@@ -47,7 +50,9 @@
     cursor: pointer;
     font-size: 20px;
 }
-
+.nav-item:hover{
+    background: rgba(204, 204, 204, 0.5);
+}
 .bottom-profile {
     position: absolute;
     bottom: 40px;

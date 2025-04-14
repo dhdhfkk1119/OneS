@@ -30,6 +30,7 @@ public class ProfileUpdateController {
     public ResponseEntity<Map<String,Object>> updateProfile(
             @RequestParam(value = "file", required = false) MultipartFile file,
             @RequestParam("userName") String userName,
+            @RequestParam("introduce") String introduce,
             Principal principal) throws IOException {
 
         Map<String,Object> response = new HashMap<>();
@@ -47,6 +48,7 @@ public class ProfileUpdateController {
             }
 
             member.setUserName(userName);
+            member.setIntroduce(introduce);
             memberRepository.save(member);
 
             response.put("status", "success");

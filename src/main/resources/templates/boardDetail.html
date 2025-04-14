@@ -22,7 +22,9 @@
     <!-- 게시글 목록 리스트 -->
     <div class="post" >
         <div class="post-header">
-            <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}" alt="프로필">
+            <a th:href="@{${'/profile/' + writers[boards.boardIdx].idx}}">
+                <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}" alt="프로필">
+            </a>
             <div class="user-info">
                 <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
                 <span class="user-id" th:text="${'@' +writers[boards.boardIdx].userId}"></span>

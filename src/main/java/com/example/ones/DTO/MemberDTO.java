@@ -70,4 +70,6 @@ public class MemberDTO {
     @Column(nullable = false)
     private Long following;
 
+    private String introduce;
+
 }
