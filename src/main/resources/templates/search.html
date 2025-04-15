@@ -6,11 +6,139 @@
     <th:block th:fragment="css">
         <link rel="stylesheet" th:href="@{/css/index.css}">
         <link rel="stylesheet" th:href="@{/css/search.css}">
+        <link rel="stylesheet" th:href="@{/css/message.css}">
     </th:block>
 </head>
 <body>
 <th:block th:fragment="content">
+    <div class="search-container">
+        <div class="profile-info search-info">
+            <a href="/">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/home-icon.png'}" alt="">
+                    <span>홈</span>
+                </div>
+            </a>
+            <a href="/search">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/search-message.png'}" alt="">
+                    <span>탐색하기</span>
+                </div>
+            </a>
+            <a href="">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/alarm-clock.png'}" alt="">
+                    <span>알림</span>
+                </div>
+            </a>
+            <!-- 로그인한 경우 -->
+            <div th:if="${member != null}">
+                <a th:href="@{'/message/' + ${member.idx}}">
+                    <div class="nav-item">
+                        <img th:src="@{'/local-images/email.png'}" alt="">
+                        <span>쪽지</span>
+                    </div>
+                </a>
+                <a th:href="@{'/profile/' + ${member.idx}}">
+                    <div class="nav-item">
+                        <img th:src="@{'/local-images/profile-user.png'}" alt="">
+                        <span>프로필</span>
+                    </div>
+                </a>
+            </div>
 
+            <!-- 로그인하지 않은 경우 -->
+            <div th:if="${member == null}">
+                <div class="nav-item" onclick="alert('로그인이 필요합니다');">
+                    <img th:src="@{'/local-images/email.png'}" alt="">
+                    <span>쪽지</span>
+                </div>
+                <div class="nav-item" onclick="alert('로그인이 필요합니다');">
+                    <img th:src="@{'/local-images/profile-user.png'}" alt="">
+                    <span>프로필</span>
+                </div>
+            </div>
+            <a href="/boardWrite">
+                <div class="nav-item">
+                    <img th:src="@{'/local-images/write.png'}" alt="">
+                    <span>작성하기</span>
+                </div>
+            </a>
+
+            <div class="bottom-profile">
+                <div sec:authorize="isAuthenticated()">
+                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                <div>
+                    <div class="bottom-name" th:text="${member.userName}"></div>
+                    <div class="bottom-id" th:text="${member.userId}"></div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="search-input">
+            <div class="search-input-inner">
+                <div class="search-input-middle">
+                    <input type="text" placeholder="검색" name="search" id="search">
+                    <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn" onclick="searchBtn()">
+                </div>
+                <div class="search-sort" th:if="${keyword != null and keyword != ''}">
+                    <ul>
+                        <li><button  class="sort-btn active" value="viewst">인기 게시물</button></li>
+                        <li><button  class="sort-btn" value="latest">최신 게시물</button></li>
+                        <li><button class="sort-btn" value="user">사용자</button></li>
+                    </ul>
+                </div>
+            </div>
+            <!-- 검색 결과가 있을 때만 보여줌 -->
+            <div th:if="${boardList != null}">
+                <div th:each="board : ${boardList}">
+                    <p th:text="${board.boardContent}"></p>
+                </div>
+            </div>
+            <!-- 검색 안 한 상태에서는 메시지 -->
+            <div th:if="${boardList == null}">
+                <p>검색어를 입력하고 버튼을 눌러보세요 🔍</p>
+            </div>
+        </div>
+    </div>
 </th:block>
 </body>
 </html>
+<script>
+    // 검색 파라미터 보내기
+    function searchBtn() {
+        const keyword = document.getElementById("search").value.trim();
+        if (keyword === '') {
+            alert("검색어를 입력해주세요.");
+            return;
+        }
+        location.href = '/search?keyword=' + encodeURIComponent(keyword);
+    }
+    // 엔터키 감지로 검색 기능
+    document.getElementById("search").addEventListener("keyup",function (event){
+        if(event.key === "Enter"){
+            searchBtn();
+        }
+    });
+
+    // sort 클릭시 정렬
+    document.addEventListener('DOMContentLoaded', function () {
+        const buttons = document.querySelectorAll('.sort-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                // 모든 버튼에서 active 제거
+                buttons.forEach(btn => btn.classList.remove('active'));
+
+                // 클릭한 버튼에 active 추가
+                this.classList.add('active');
+
+                // 정렬값 사용하고 싶으면 아래처럼 활용 가능
+                const sortValue = this.value;
+                console.log("선택된 정렬값:", sortValue);
+
+                // 필요하다면 여기에 검색 요청 보내는 로직 넣을 수 있음
+            });
+        });
+    });
+</script>

@@ -31,13 +31,13 @@
                     <span>알림</span>
                 </div>
             </a>
-            <a th:href="@{${'/message/' + member.idx}}">
+            <a th:href="@{${'/message/' + memberIdx}}">
                 <div class="nav-item">
                     <img th:src="@{'/local-images/email.png'}" alt="">
                     <span>쪽지</span>
                 </div>
             </a>
-            <a th:href="@{${'/profile/' + member.idx}}">
+            <a th:href="@{${'/profile/' + memberIdx}}">
                 <div class="nav-item">
                     <img th:src="@{'/local-images/profile-user.png'}" alt="">
                     <span>프로필</span>
@@ -51,10 +51,10 @@
             </a>
 
             <div class="bottom-profile">
-                <img src="/profile-images/basic.png" alt="프로필">
+                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
                 <div>
-                    <div class="bottom-name">홍길동</div>
-                    <div class="bottom-id">@hong123</div>
+                    <div class="bottom-name" th:text="${member.userName}"></div>
+                    <div class="bottom-id" th:text="${member.userId}"></div>
                 </div>
             </div>
         </div>
@@ -77,15 +77,15 @@
         <!-- 3. Message Detail -->
         <div class="message">
             <div class="user-details">
-                <img src="/profile-images/basic.png" alt="유저 이미지" class="user-details-img">
-                <div>이영희</div>
-                <div>@younghee92</div>
-                <div>안녕하세요~ 잘 지내시죠?</div>
+                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
+                <div th:text="${member.userName}"></div>
+                <div th:text="${member.userId}"></div>
+                <div th:text="${member.introduce}"></div>
                 <div class="user-calendar">
                     <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
-                    <span>가입일: 2022-05-20</span>
+                    <span th:text="${member.userAt}">가입일: 2022-05-20</span>
                 </div>
-                <div>팔로워: 512명</div>
+                <div th:text="${member.follow}">팔로워: 512명</div>
                 <div>팔로잉 상태: 서로 팔로우 중</div>
             </div>
 

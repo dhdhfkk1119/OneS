@@ -1,0 +1,71 @@
+body {
+    background: white;
+}
+.search-container {
+    width: 50%;
+    display: flex;
+    margin: 0 auto;
+    height: 96vh;
+}
+.search-input-middle {
+    position: relative;
+}
+.search-input{
+    width: 55%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.search-info {
+    width: 20%!important;
+}
+.search-input-middle input {
+    width: 100%;
+    padding: 15px 0;
+    border-radius: 25px;
+    border: 1px solid #333;
+    text-indent: 10px;
+}
+.search-send-btn{
+    position: absolute;
+    right: 10px;
+    top: 30%;
+    cursor: pointer;
+}
+.search-sort {
+
+}
+.search-sort ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid #ddd; /* 아래 줄 */
+    list-style: none;
+}
+
+.search-sort ul li {
+    width: 33.33%;
+    text-align: center;
+    border-right: 1px solid #ddd;
+}
+
+.search-sort ul li:last-child {
+    border-right: none; /* 마지막은 오른쪽 선 제거 */
+}
+
+.sort-btn {
+    width: 100%;
+    padding: 15px 0;
+    border: none;
+    background-color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sort-btn:hover {
+    background-color: #f5f5f5;
+}
+.sort-btn.active {
+    font-weight: bold;
+    border-bottom: 3px solid #333;
+}

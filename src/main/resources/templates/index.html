@@ -13,7 +13,7 @@
     <div class="navbar">
         <div class="navbar-inner">
             <a href="/">게시물</a>
-            <a href="/">검색</a>
+            <a th:href="@{'/search'}">검색</a>
             <a class="profile-src"
                onclick="ProfileBtn(event)"
                th:data-idx="${member != null} ? ${member.idx} : ''">
