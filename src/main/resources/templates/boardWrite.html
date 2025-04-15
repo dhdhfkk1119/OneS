@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html}">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <th:block th:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="stylesheet" th:href="@{/css/boardWrite.css}">
+    </th:block>
+</head>
+<body>
+<th:block th:fragment="content">
+    <div class="navbar-detail">
+        <div class="navbar-inner-detail">
+            <a href="javascript:history.back()">
+                <img src="/local-images/back.png" alt="" width="20px">
+                <span>나의 게시물</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="boardWrite">
+        <div class="post-create">
+            <div th:if="${#authorization.expression('isAuthenticated()')}">
+                <form th:action="@{/board}" method="post" th:object="${board}" enctype="multipart/form-data">
+                    <div style="display: flex; align-items: center;">
+                        <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                        <div class="user-info" style="margin-left: 10px">
+                            <span class="user-name" th:text="${member.userName}"></span>
+                            <span class="user-id" th:text="${'@' +member.userId}"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <input type="text" th:field="*{boardContent}" placeholder="무엇을 작성하시겠습니까?">
+                    </div>
+
+                    <!-- 이미지 미리보기 슬라이드 -->
+                    <div class="image-slider">
+                        <button type="button" class="slide-btn left">&#10094;</button>
+                        <div class="preview-container" id="preview-container"></div>
+                        <button type="button" class="slide-btn right">&#10095;</button>
+                    </div>
+
+                    <div class="buttons">
+                        <input type="file" class="upload-btn" name="files" onchange="preView(this);" multiple
+                               accept="image/*"/>
+                        <button class="file-btn" onclick="ImgUpload(event)">이미지 선택</button>
+                        <button class="submit-btn">작성 완료</button>
+                    </div>
+                </form>
+            </div>
+            <div th:if="${#authorization.expression('isAnonymous()')}" class="login-message">
+                <div style="display: flex; align-items: center;">
+                    <img class="profile-img" th:src="@{'/profile-images/' + basic.png}" alt="프로필">
+                </div>
+                <div>
+                    <input type="text" placeholder="로그인 후 이용이 가능합니다">
+                </div>
+                <a th:href="@{/login}">로그인 페이지로 이동</a>
+            </div>
+        </div>
+
+    </div>
+</th:block>
+</body>
+</html>
+<script>
+    // 게시물 preView 및 댓글 preView
+    let postImages = [];  // 게시물 이미지 배열
+    let commentImagesMap = {};  // key: boardId, value: 이미지 배열
+
+    // 게시물 및 댓글 이미지 프리뷰
+    function preView(input) {
+        const isComment = input.classList.contains("commentupload-btn");
+        const boardId = input.dataset.boardId;
+
+        let previewContainer;
+        if (isComment) {
+            previewContainer = document.querySelector(`.comment-section[data-board-id="${boardId}"] .comment-container`);
+            if (!commentImagesMap[boardId]) {
+                commentImagesMap[boardId] = [];  // 초기화
+            }
+        } else {
+            previewContainer = document.getElementById("preview-container");
+        }
+
+        let images = isComment ? commentImagesMap[boardId] : postImages;
+
+        if (input.files.length + images.length > 10) {
+            alert("최대 10장까지만 업로드할 수 있습니다.");
+            return;
+        }
+
+        Array.from(input.files).forEach((file) => {
+            if (!file.type.startsWith("image/")) return;
+
+            images.push(file);
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgWrapper = document.createElement("div");
+                imgWrapper.classList.add("preview-wrapper");
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("preview-img");
+
+                const closeBtn = document.createElement("span");
+                closeBtn.classList.add("preview-close");
+                closeBtn.textContent = "X";
+                closeBtn.onclick = function () {
+                    const currentIndex = images.indexOf(file);
+                    removeImage(currentIndex, isComment, boardId); // ✨ boardId 넘기기
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(closeBtn);
+                previewContainer.appendChild(imgWrapper);
+                if(isComment){
+                    initComentSlider();
+                }else{
+                    initBoardSlider();
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        updateFileInput(isComment, boardId); // ✨ boardId 넘기기
+    }
+
+
+    // 게시물 이미지 삭제 및 댓글 이미지 삭제
+    function removeImage(index, isComment, boardId = null) {
+        let images = isComment ? commentImagesMap[boardId] : postImages;
+
+        let previewContainer;
+        if (isComment) {
+            const commentSection = document.querySelector(`.comment-section[data-board-id="${boardId}"]`);
+            previewContainer = commentSection.querySelector(".comment-container");
+        } else {
+            previewContainer = document.getElementById("preview-container");
+        }
+
+        images.splice(index, 1);
+
+        const dataTransfer = new DataTransfer();
+        images.forEach(file => dataTransfer.items.add(file));
+
+        if (isComment) {
+            const container = document.querySelector(`.comment-section[data-board-id="${boardId}"]`);
+            const fileInput = container.querySelector(".commentupload-btn");
+            fileInput.files = dataTransfer.files;
+        } else {
+            const fileInput = document.querySelector(".upload-btn");
+            fileInput.files = dataTransfer.files;
+        }
+
+        // 미리보기 다시 렌더링
+        previewContainer.innerHTML = '';
+        images.forEach((file) => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgWrapper = document.createElement("div");
+                imgWrapper.classList.add("preview-wrapper");
+
+                const img = document.createElement("img");
+                img.src = e.target.result;
+                img.classList.add("preview-img");
+
+                const closeBtn = document.createElement("span");
+                closeBtn.classList.add("preview-close");
+                closeBtn.textContent = "X";
+                closeBtn.onclick = function () {
+                    const currentIndex = images.indexOf(file);
+                    removeImage(currentIndex, isComment, boardId);
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(closeBtn);
+                previewContainer.appendChild(imgWrapper);
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+
+    //선택한 이미지를 input에 넣어줌 기존 파일을 유지해줌
+    function updateFileInput(isComment, boardId = null) {
+        const dataTransfer = new DataTransfer();
+        let images;
+
+        if (isComment) {
+            images = commentImagesMap[boardId] || [];
+            const container = document.querySelector(`.comment-section[data-board-id="${boardId}"]`);
+            const fileInput = container.querySelector(".commentupload-btn");
+            images.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        } else {
+            images = postImages;
+            const fileInput = document.querySelector(".upload-btn");
+            images.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+    }
+
+    // 게시글 작성 이미지 슬라이드
+    function initBoardSlider() {
+        const sliders = document.querySelector(".image-slider");
+        const imgContainer = sliders.querySelector(".preview-container");
+        const images = Array.from(imgContainer.querySelectorAll(".preview-wrapper"));
+        const leftBtn = sliders.querySelector(".left");
+        const rightBtn = sliders.querySelector(".right");
+        const imgWidth = 285;
+        let currentIndex = 0;
+
+        const maxIndex = Math.max(images.length - 2, 0); // ✅ 항상 0 이상으로
+
+        function updateSlide() {
+            const offset = -(currentIndex * imgWidth);
+            imgContainer.style.transform = `translateX(${offset}px)`;
+
+            leftBtn.style.display = currentIndex > 0 ? 'block' : 'none';
+            rightBtn.style.display = currentIndex < maxIndex ? 'block' : 'none';
+        }
+
+        leftBtn.onclick = function () {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateSlide();
+            }
+        };
+
+        rightBtn.onclick = function () {
+            if (currentIndex < maxIndex) {
+                currentIndex++;
+                updateSlide();
+            }
+        };
+
+        updateSlide();
+    }
+
+    // 게실물 이미지 버튼 form 데이터 제출 막기
+    function ImgUpload(event){
+        event.preventDefault(); // 기본 이벤트(폼 제출) 방지
+        document.querySelector(".upload-btn").click();
+    }
+</script>

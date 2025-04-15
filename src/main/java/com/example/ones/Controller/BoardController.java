@@ -25,6 +25,17 @@ public class BoardController {
     private final BoardService boardService;
     private final MemberRepository memberRepository;
 
+    @GetMapping("/boardWrite")
+    public String boardWrite(Model model , Principal principal){
+        String username = principal.getName();
+        Member member = memberRepository.findByUserId(username)
+                        .orElseThrow(() -> new RuntimeException("해당 유저를 찾을수없습니다"));
+
+        model.addAttribute("member",member);
+        model.addAttribute("board",new Board());
+        return "boardWrite";
+    }
+
     // 메인페이지 게실물 작성하기
     @PostMapping("/board")
     public String register(Model model ,

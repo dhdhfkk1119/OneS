@@ -20,7 +20,7 @@
                 <div class="input-row-id">
                     <input type="text" id="userId" th:field="*{userId}" required>
                     <button type="button" onclick="checkDuplicate()">중복 확인</button>
-                    <small  class="error" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></small>
+                    <small class="error" th:if="${#fields.hasErrors('userId')}" th:errors="*{userId}"></small>
                 </div>
                 <small id="username-message"></small>
             </div>
@@ -43,7 +43,8 @@
             <div class="input-group">
                 <label for="confirm-password">비밀번호 확인</label>
                 <input type="password" id="confirm-password" th:field="*{userRePassword}" required>
-                <small class="error" th:if="${#fields.hasErrors('userRePassword')}" th:errors="*{userRePassword}"></small>
+                <small class="error" th:if="${#fields.hasErrors('userRePassword')}"
+                       th:errors="*{userRePassword}"></small>
             </div>
 
             <!-- 나이 선택 -->
@@ -64,8 +65,10 @@
                         <input type="text" id="address" class="address" th:field="*{address}" required>
                         <button type="button" onclick="searchAddress()">주소 찾기</button>
                     </div>
-                    <input type="text" id="addressDefault" th:field="*{addressDefault}" class="addressDefault" placeholder="기본 주소를 입력하세요">
-                    <input type="text" id="addressDetail" th:field="*{addressDetail}" class="addressDetail" placeholder="상세 주소를 입력하세요">
+                    <input type="text" id="addressDefault" th:field="*{addressDefault}" class="addressDefault"
+                           placeholder="기본 주소를 입력하세요">
+                    <input type="text" id="addressDetail" th:field="*{addressDetail}" class="addressDetail"
+                           placeholder="상세 주소를 입력하세요">
                     <small class="error" th:if="${#fields.hasErrors('userAddress')}" th:errors="*{userAddress}"></small>
                 </div>
             </div>
@@ -73,15 +76,18 @@
             <!-- 이메일 입력 -->
             <div class="input-group">
                 <label for="email">이메일</label>
-                <input type="email" id="email" th:field="*{userEmail}" placeholder="example@example.com 형태로 작성" required>
+                <input type="email" id="email" th:field="*{userEmail}" placeholder="example@example.com 형태로 작성"
+                       required>
                 <small class="error" th:if="${#fields.hasErrors('userEmail')}" th:errors="*{userEmail}"></small>
             </div>
 
             <!-- 휴대폰 입력 -->
             <div class="input-group">
                 <label for="phone">휴대폰</label>
-                <input type="text" id="phone" th:field="*{userPhoneNumber}" oninput="formatPhoneNumber(this)" placeholder="010-1234-1234" required>
-                <small class="error" th:if="${#fields.hasErrors('userPhoneNumber')}" th:errors="*{userPhoneNumber}"></small>
+                <input type="text" id="phone" th:field="*{userPhoneNumber}" oninput="formatPhoneNumber(this)"
+                       placeholder="010-1234-1234" required>
+                <small class="error" th:if="${#fields.hasErrors('userPhoneNumber')}"
+                       th:errors="*{userPhoneNumber}"></small>
             </div>
 
             <div class="button-group">
