@@ -97,32 +97,6 @@ public class MainController {
     public String login(){
         return "login";
     }
-    
-    // 현재 접속중인 유저의 이름 정보를 제공
-    @ModelAttribute 
-    public void modelAttributes(Model model){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();// 현재 로그인한 사용자의 정보
-        if(authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof User){
-            User user = (User) authentication.getPrincipal(); // 현재 로그인한 유저
-            String userId = user.getUsername(); // 유저의 ID
-            
-            //DB에서 해당하는 정보 가져오기
-            Optional<Member> optionalMember = memberRepository.findByUserId(userId);
-            String UserName = optionalMember.map(Member::getUserName).orElse("");
-            model.addAttribute("UserName", UserName); // Member에서 이름 가져오기
-            
-            //권한 목록 가져오기
-            Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
-            String role = authorities.stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .findFirst()
-                        .orElse("ROLE_USER");
-            model.addAttribute("role", role);
 
-        }else {
-            model.addAttribute("UserName","");
-            model.addAttribute("role","ROLE_GUEST");
-        }
-    }
 
 }

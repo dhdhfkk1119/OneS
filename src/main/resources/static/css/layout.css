@@ -9,6 +9,9 @@ body {
 }
 
 /* 헤더 (Header) 스타일 */
+.layout-username {
+    font-weight: 700;
+}
 .layout-header {
     background-color: #f8d9e3; /* 연한 핑크 색 */
     padding: 15px 0;

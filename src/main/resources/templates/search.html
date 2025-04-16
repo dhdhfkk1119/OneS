@@ -6,14 +6,13 @@
     <th:block th:fragment="css">
         <link rel="stylesheet" th:href="@{/css/index.css}">
         <link rel="stylesheet" th:href="@{/css/search.css}">
-        <link rel="stylesheet" th:href="@{/css/message.css}">
     </th:block>
 </head>
 <body>
 <th:block th:fragment="content">
     <div class="main-container">
         <div class="search-container">
-            <div class="profile-info search-info">
+            <div class="search-info">
                 <a href="/">
                     <div class="nav-item">
                         <img th:src="@{'/local-images/home-icon.png'}" alt="">
@@ -67,50 +66,55 @@
                 </a>
 
                 <div class="bottom-profile">
-                    <div sec:authorize="isAuthenticated()">
-                        <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                    <div class="bottom-profile-inner" sec:authorize="isAuthenticated()">
+                        <a th:href="@{${'/profile/' + member.idx}}">
+                            <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                        </a>
                         <div>
                             <div class="bottom-name" th:text="${member.userName}"></div>
-                            <div class="bottom-id" th:text="${member.userId}"></div>
+                            <div class="bottom-id" th:text="${'@' +member.userId}"></div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="search-input">
-                <div class="search-input-inner">
-                    <div class="search-input-middle">
-                        <input type="text" placeholder="검색" name="search" id="search" th:value="${keyword}"
-                               onclick="historyLog()">
-                        <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn"
-                             onclick="searchBtn()">
-                    </div>
-                    <div class="search-sort" th:if="${keyword != null and keyword != ''}">
-                        <ul>
-                            <li>
-                                <button class="sort-btn" th:value="'viewst'"
-                                        th:classappend="${sort} == 'viewst' ? 'active' : ''">인기 게시물
-                                </button>
-                            </li>
-                            <li>
-                                <button class="sort-btn" th:value="'latest'"
-                                        th:classappend="${sort} == 'latest' ? 'active' : ''">최신 게시물
-                                </button>
-                            </li>
-                            <li>
-                                <button class="sort-btn" th:value="'user'"
-                                        th:classappend="${sort} == 'user' ? 'active' : ''">사용자
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="history-list" sec:authorize="isAuthenticated()">
-                        <ul id="history-container" th:each=" history : ${searchHistoryList}">
-                            <li>
+                <div class="search-input-wrapper" style="position: relative;">
+                    <div class="search-input-inner">
+                        <div class="search-input-middle">
+                            <input type="text" placeholder="검색" name="search" id="search"
+                                   th:value="${keyword}" autocomplete="off">
+                            <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn"
+                                 onclick="searchBtn()">
+                        </div>
+                        <div class="search-sort" th:if="${keyword != null and keyword != ''}">
+                            <ul>
+                                <li>
+                                    <button class="sort-btn" th:value="'viewst'"
+                                            th:classappend="${sort} == 'viewst' ? 'active' : ''">인기 게시물
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="sort-btn" th:value="'latest'"
+                                            th:classappend="${sort} == 'latest' ? 'active' : ''">최신 게시물
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="sort-btn" th:value="'user'"
+                                            th:classappend="${sort} == 'user' ? 'active' : ''">사용자
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- 검색 기록을 보여준다-->
+                        <div class="history-list" id="historyList" sec:authorize="isAuthenticated()">
+                            <ul id="history-container" th:each=" history : ${searchHistoryList}">
+                                <li>
                            <span class="history-btn" th:data-history="${history.searchKeyword}"
                                  th:text="${history.searchKeyword}"></span>
-                                <span class="history-delete" th:data-delete="${history.searchIdx}">x</span>
-                            </li>
-                        </ul>
+                                    <span class="history-delete" th:data-delete="${history.searchIdx}">x</span>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
                 <!-- 검색 결과가 있을 때만 보여줌 -->
@@ -239,7 +243,6 @@
         });
     });
 
-
     // 검색 기록 클릭시 검색어에 등록이됨
     document.addEventListener("DOMContentLoaded", function () {
         const buttons = document.querySelectorAll('.history-btn');
@@ -261,7 +264,6 @@
             });
         });
     });
-
 
     // 최근 검색기록 검색 기록 보내기 저장
     function saveSearchKeywordToServer(keyword) {
@@ -414,6 +416,7 @@
         });
     });
 
+    // 찜하기
     document.addEventListener("DOMContentLoaded",function (){
         const btns = document.querySelectorAll(".boardLike-btn");
 
@@ -463,6 +466,27 @@
                     })
                     .catch(error => console.error("Error :", error));
             });
+        });
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search");
+        const historyList = document.getElementById("historyList");
+
+        if (!searchInput || !historyList) return;
+
+        searchInput.addEventListener("focus", () => {
+            historyList.style.display = "block";
+        });
+
+        searchInput.addEventListener("blur", () => {
+            setTimeout(() => {
+                historyList.style.display = "none";
+            }, 200);
+        });
+
+        historyList.addEventListener("mousedown", (e) => {
+            e.preventDefault();
         });
     });
 </script>
