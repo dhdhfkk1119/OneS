@@ -78,14 +78,21 @@
         <div class="search-input">
             <div class="search-input-inner">
                 <div class="search-input-middle">
-                    <input type="text" placeholder="검색" name="search" id="search">
+                    <input type="text" placeholder="검색" name="search" id="search" th:value="${keyword}" onclick="historyLog()">
                     <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn" onclick="searchBtn()">
                 </div>
                 <div class="search-sort" th:if="${keyword != null and keyword != ''}">
                     <ul>
-                        <li><button  class="sort-btn active" value="viewst">인기 게시물</button></li>
-                        <li><button  class="sort-btn" value="latest">최신 게시물</button></li>
-                        <li><button class="sort-btn" value="user">사용자</button></li>
+                        <li><button class="sort-btn" th:value="'viewst'" th:classappend="${sort} == 'viewst' ? 'active' : ''">인기 게시물</button></li>
+                        <li><button class="sort-btn" th:value="'latest'" th:classappend="${sort} == 'latest' ? 'active' : ''">최신 게시물</button></li>
+                        <li><button class="sort-btn" th:value="'user'" th:classappend="${sort} == 'user' ? 'active' : ''">사용자</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <ul>
+                        <li>1</li>
+                        <li>2</li>
+                        <li>3</li>
                     </ul>
                 </div>
             </div>
@@ -105,40 +112,85 @@
 </body>
 </html>
 <script>
-    // 검색 파라미터 보내기
+    // 검색 버튼 클릭
     function searchBtn() {
         const keyword = document.getElementById("search").value.trim();
         if (keyword === '') {
             alert("검색어를 입력해주세요.");
             return;
         }
-        location.href = '/search?keyword=' + encodeURIComponent(keyword);
+
+        // 선택된 정렬 값 가져오기 (기본값은 viewst)
+        const activeSort = document.querySelector('.sort-btn.active');
+        const sortValue = activeSort ? activeSort.value : 'viewst';
+
+        // 검색어 + 정렬 파라미터로 이동
+        const query = new URLSearchParams();
+        query.append('keyword', keyword);
+        query.append('sort', sortValue);
+
+        location.href = '/search?' + query.toString();
+        saveSearchKeywordToServer(keyword);
+
     }
-    // 엔터키 감지로 검색 기능
-    document.getElementById("search").addEventListener("keyup",function (event){
-        if(event.key === "Enter"){
+
+    // 엔터키로 검색
+    document.getElementById("search").addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
             searchBtn();
         }
     });
 
-    // sort 클릭시 정렬
+    // 정렬 버튼 클릭
     document.addEventListener('DOMContentLoaded', function () {
         const buttons = document.querySelectorAll('.sort-btn');
 
         buttons.forEach(button => {
             button.addEventListener('click', function () {
-                // 모든 버튼에서 active 제거
-                buttons.forEach(btn => btn.classList.remove('active'));
+                const keyword = document.getElementById('search').value.trim();
 
-                // 클릭한 버튼에 active 추가
+                // 정렬 버튼 active 처리
+                buttons.forEach(btn => btn.classList.remove('active'));
                 this.classList.add('active');
 
-                // 정렬값 사용하고 싶으면 아래처럼 활용 가능
-                const sortValue = this.value;
-                console.log("선택된 정렬값:", sortValue);
+                // keyword가 없으면 검색어 입력 유도
+                if (keyword === '') {
+                    alert("검색어를 입력해주세요.");
+                    return;
+                }
 
-                // 필요하다면 여기에 검색 요청 보내는 로직 넣을 수 있음
+                const sortValue = this.value;
+
+                const query = new URLSearchParams();
+                query.append('keyword', keyword);
+                query.append('sort', sortValue);
+
+                location.href = '/search?' + query.toString();
             });
         });
     });
+
+
+    // 최근 검색기록 검색 기록 보내기 저장
+    function saveSearchKeywordToServer(keyword) {
+        fetch('/search-history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ keyword: keyword })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("서버 에러 발생");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("검색어 저장 성공:", data);
+        })
+        .catch(error => {
+            console.error("검색어 저장 실패:", error);
+        });
+    }
 </script>
