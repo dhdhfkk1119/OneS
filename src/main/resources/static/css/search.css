@@ -1,39 +1,64 @@
-body {
-    background: white;
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 콘텐츠가 부족할 땐 최소 높이 보장 */
 }
 .search-container {
-    width: 50%;
     display: flex;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 1200px;
     margin: 0 auto;
-    height: 96vh;
 }
 .search-input-middle {
     position: relative;
+    width: 600px;
 }
-.search-input{
-    width: 55%;
+.post{
+    margin: 15px 0;!important;
+}
+/* 왼쪽 네비 (고정) */
+.search-info {
+    width: 200px;
+    position: sticky;
+    top: 0;
+    height: 100vh; /* 전체 화면만큼 */
+    padding: 20px;
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+/* 오른쪽 콘텐츠 */
+.search-input {
     padding: 20px;
     box-sizing: border-box;
 }
-.search-info {
-    width: 20%!important;
-}
+
 .search-input-middle input {
     width: 100%;
     padding: 15px 0;
     border-radius: 25px;
     border: 1px solid #333;
-    text-indent: 10px;
+    text-indent: 15px;
 }
-.search-send-btn{
+
+.search-send-btn {
     position: absolute;
     right: 10px;
     top: 30%;
     cursor: pointer;
 }
+
 .search-sort {
 
 }
+
 .search-sort ul {
     display: flex;
     margin: 0;
@@ -65,7 +90,99 @@ body {
 .sort-btn:hover {
     background-color: #f5f5f5;
 }
+
 .sort-btn.active {
     font-weight: bold;
     border-bottom: 3px solid #333;
 }
+
+/*  --------------------- 검색할시에 검색 기록 저장 css --------------------- 시작*/
+.history-list {
+    border-radius: 20px;
+    background: #ffffff;
+}
+
+.history-list ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.history-list ul li {
+    list-style: none;
+    width: 100%;
+    padding: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #7c7c7c;
+}
+
+.history-btn {
+    width: 90%;
+    cursor: pointer;
+}
+
+.history-delete {
+    width: 27px;
+    text-align: center;
+    cursor: pointer;
+    color: black;
+}
+
+.history-delete:hover {
+    background: #ccc;
+    border-radius: 50%;
+    color: #c50000;
+    padding: 5px 0;
+}
+
+.history-list ul li:hover {
+    background-color: #f5f5f5;
+}
+/*  --------------------- 검색할시에 검색 기록 저장 css --------------------- 시작*/
+/* ----------------------------------- 정렬 유저 버튼 누르면 해당 검색의 정보 시작 -----------------------------------css */
+.user-list {
+
+}
+
+.user-list-inner {
+    border-bottom: 1px solid #f4f4f4;
+    padding: 5px 0;
+
+}
+.user-list-inner a{
+    text-decoration: none;
+}
+.user-item {
+    display: flex;
+    padding: 5px;
+    gap: 10px;
+}
+
+.user-item:hover {
+    background: #ccc;
+    border-radius: 10px;
+}
+
+.user-name {
+    color: black;
+    font-weight: 700;
+}
+
+.user-id {
+    color: #7c7c7c;
+}
+
+.user-content {
+    padding-top: 5px;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;         /* ✅ 줄 수 설정 */
+    -webkit-box-orient: vertical;  /* ✅ 세로 방향 설정 */
+    overflow: hidden;              /* ✅ 넘치는 텍스트 숨김 */
+    text-overflow: ellipsis;      /* ✅ 말줄임 (...) */
+    line-height: 1.4em;            /* ✅ 줄 높이 조절 (선택) */
+    max-height: 2.8em;             /* ✅ 2줄 제한 높이 (line-height * 2) */
+}
+/* ----------------------------------- 정렬 유저 버튼 누르면 해당 검색의 정보 끝 -----------------------------------css */

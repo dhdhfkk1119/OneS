@@ -43,4 +43,15 @@ public class SearchHistoryController {
 
         return ResponseEntity.badRequest().body(Map.of("message", "저장 실패"));
     }
+
+    // 유저 검색 기록 삭제
+    @PostMapping("/search-delete")
+    public ResponseEntity<?> deleteSearchHistory(@RequestBody Map<String, Object> payload) {
+        Long idx = Long.valueOf(payload.get("deleteValue").toString());
+
+        // 실제로 삭제
+        searchHistoryRepositroy.deleteById(idx);
+
+        return ResponseEntity.ok(Map.of("result", "success"));
+    }
 }

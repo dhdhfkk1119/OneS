@@ -2,6 +2,8 @@ package com.example.ones.Repository;
 
 import com.example.ones.Entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -9,6 +11,12 @@ import java.util.Optional;
 
 @Repository
 public interface MemberRepository extends JpaRepository<Member, Integer> {
+
+    @Query("SELECT p FROM Member p WHERE " +
+            "(p.userName LIKE %:keyword% OR p.introduce LIKE %:keyword%)" +
+            "ORDER BY " +
+            "p.userAt DESC")
+    List<Member> findBySearchKeyword(@Param("keyword") String keyword);
 
     Optional<Member> findByIdx(Long id); // Long 타입을 받는 메서드 추가
 

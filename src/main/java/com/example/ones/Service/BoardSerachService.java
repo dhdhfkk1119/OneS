@@ -1,7 +1,9 @@
 package com.example.ones.Service;
 
 import com.example.ones.Entity.Board;
+import com.example.ones.Entity.Member;
 import com.example.ones.Repository.BoardRepository;
+import com.example.ones.Repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -14,7 +16,12 @@ import java.util.List;
 public class BoardSerachService {
 
     private final BoardRepository boardRepository;
+    private final MemberRepository memberRepository;
 
+    @Transactional
+    public List<Member> searchMember(String keyword) {
+        return memberRepository.findBySearchKeyword(keyword);
+    }
     
     // 검색 및 정렬 기능
     @Transactional

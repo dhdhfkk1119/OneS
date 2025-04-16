@@ -11,100 +11,169 @@
 </head>
 <body>
 <th:block th:fragment="content">
-    <div class="search-container">
-        <div class="profile-info search-info">
-            <a href="/">
-                <div class="nav-item">
-                    <img th:src="@{'/local-images/home-icon.png'}" alt="">
-                    <span>홈</span>
-                </div>
-            </a>
-            <a href="/search">
-                <div class="nav-item">
-                    <img th:src="@{'/local-images/search-message.png'}" alt="">
-                    <span>탐색하기</span>
-                </div>
-            </a>
-            <a href="">
-                <div class="nav-item">
-                    <img th:src="@{'/local-images/alarm-clock.png'}" alt="">
-                    <span>알림</span>
-                </div>
-            </a>
-            <!-- 로그인한 경우 -->
-            <div th:if="${member != null}">
-                <a th:href="@{'/message/' + ${member.idx}}">
+    <div class="main-container">
+        <div class="search-container">
+            <div class="profile-info search-info">
+                <a href="/">
                     <div class="nav-item">
+                        <img th:src="@{'/local-images/home-icon.png'}" alt="">
+                        <span>홈</span>
+                    </div>
+                </a>
+                <a href="/search">
+                    <div class="nav-item">
+                        <img th:src="@{'/local-images/search-message.png'}" alt="">
+                        <span>탐색하기</span>
+                    </div>
+                </a>
+                <a href="">
+                    <div class="nav-item">
+                        <img th:src="@{'/local-images/alarm-clock.png'}" alt="">
+                        <span>알림</span>
+                    </div>
+                </a>
+                <!-- 로그인한 경우 -->
+                <div th:if="${member != null}">
+                    <a th:href="@{'/message/' + ${member.idx}}">
+                        <div class="nav-item">
+                            <img th:src="@{'/local-images/email.png'}" alt="">
+                            <span>쪽지</span>
+                        </div>
+                    </a>
+                    <a th:href="@{'/profile/' + ${member.idx}}">
+                        <div class="nav-item">
+                            <img th:src="@{'/local-images/profile-user.png'}" alt="">
+                            <span>프로필</span>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- 로그인하지 않은 경우 -->
+                <div th:if="${member == null}">
+                    <div class="nav-item" onclick="alert('로그인이 필요합니다');">
                         <img th:src="@{'/local-images/email.png'}" alt="">
                         <span>쪽지</span>
                     </div>
-                </a>
-                <a th:href="@{'/profile/' + ${member.idx}}">
-                    <div class="nav-item">
+                    <div class="nav-item" onclick="alert('로그인이 필요합니다');">
                         <img th:src="@{'/local-images/profile-user.png'}" alt="">
                         <span>프로필</span>
                     </div>
+                </div>
+                <a href="/boardWrite">
+                    <div class="nav-item">
+                        <img th:src="@{'/local-images/write.png'}" alt="">
+                        <span>작성하기</span>
+                    </div>
                 </a>
-            </div>
 
-            <!-- 로그인하지 않은 경우 -->
-            <div th:if="${member == null}">
-                <div class="nav-item" onclick="alert('로그인이 필요합니다');">
-                    <img th:src="@{'/local-images/email.png'}" alt="">
-                    <span>쪽지</span>
-                </div>
-                <div class="nav-item" onclick="alert('로그인이 필요합니다');">
-                    <img th:src="@{'/local-images/profile-user.png'}" alt="">
-                    <span>프로필</span>
+                <div class="bottom-profile">
+                    <div sec:authorize="isAuthenticated()">
+                        <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
+                        <div>
+                            <div class="bottom-name" th:text="${member.userName}"></div>
+                            <div class="bottom-id" th:text="${member.userId}"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <a href="/boardWrite">
-                <div class="nav-item">
-                    <img th:src="@{'/local-images/write.png'}" alt="">
-                    <span>작성하기</span>
+            <div class="search-input">
+                <div class="search-input-inner">
+                    <div class="search-input-middle">
+                        <input type="text" placeholder="검색" name="search" id="search" th:value="${keyword}"
+                               onclick="historyLog()">
+                        <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn"
+                             onclick="searchBtn()">
+                    </div>
+                    <div class="search-sort" th:if="${keyword != null and keyword != ''}">
+                        <ul>
+                            <li>
+                                <button class="sort-btn" th:value="'viewst'"
+                                        th:classappend="${sort} == 'viewst' ? 'active' : ''">인기 게시물
+                                </button>
+                            </li>
+                            <li>
+                                <button class="sort-btn" th:value="'latest'"
+                                        th:classappend="${sort} == 'latest' ? 'active' : ''">최신 게시물
+                                </button>
+                            </li>
+                            <li>
+                                <button class="sort-btn" th:value="'user'"
+                                        th:classappend="${sort} == 'user' ? 'active' : ''">사용자
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="history-list" sec:authorize="isAuthenticated()">
+                        <ul id="history-container" th:each=" history : ${searchHistoryList}">
+                            <li>
+                           <span class="history-btn" th:data-history="${history.searchKeyword}"
+                                 th:text="${history.searchKeyword}"></span>
+                                <span class="history-delete" th:data-delete="${history.searchIdx}">x</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-            </a>
+                <!-- 검색 결과가 있을 때만 보여줌 -->
+                <!--   게시글 리스트  -->
+                <div th:if="${boardList != null}">
+                    <div class="post" th:each="boards : ${boardList}">
+                        <div class="post-header">
+                            <a th:href="@{'/profile/' + ${writers[boards.boardIdx].idx}}">
+                                <img class="profile-img"
+                                     th:src="@{'/profile-images/' + ${writers[boards.boardIdx].userImage}}" alt="프로필">
+                            </a>
+                            <div class="user-info">
+                                <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
+                                <span class="user-id" th:text="${'@' +writers[boards.boardIdx].userId}"></span>
+                            </div>
+                            <span class="time" th:data-time="${boards.boardAt}"></span>
+                        </div>
+                        <a class="boardDetail" th:href="@{${'/board/' + boards.boardIdx}}">
+                            <div class="post-content" th:text="${boards.boardContent}">
+                            </div>
+                            <div class="board-img-list">
+                                <div class="board-img-list-inner">
+                                    <button class="board-slide-left">&#10094;</button>
+                                    <div class="img-list-inner board-list"
+                                         th:each="imgUrl : ${boardImages.get(boards.boardIdx)}">
+                                        <img th:src="@{${'/board-images/' + imgUrl}}" alt="게시물 이미지">
+                                    </div>
+                                    <button class="board-slide-right">&#10095;</button>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="post-actions">
+                            <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
+                            <span>
+                            <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
+                            <span class="board-like-count" th:text="${boards.boardLike}"></span>
+                        </span>
+                            <span>👀 <span th:text="${boards.boardView}"></span></span>
+                        </div>
+                    </div>
+                </div>
 
-            <div class="bottom-profile">
-                <div sec:authorize="isAuthenticated()">
-                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
-                <div>
-                    <div class="bottom-name" th:text="${member.userName}"></div>
-                    <div class="bottom-id" th:text="${member.userId}"></div>
+                <!-- 유저 리스트 -->
+                <div class="user-list" th:if="${sort == 'user'}">
+                    <div class="user-list-inner" th:each="m : ${memberList}">
+                        <a th:href="@{${'/profile/' + m.idx}}">
+                            <div class="user-item">
+                                <div>
+                                    <img th:src="@{${'/profile-images/' + m.getUserImage()}}" alt="" width="56">
+                                </div>
+                                <div>
+                                    <div>
+                                        <span class="user-name" th:text="${m.userName}"></span>
+                                        <span class="user-id" th:text="${'@' +m.userId}"></span>
+                                    </div>
+                                    <div>
+                                        <span class="user-content" th:text="${m.introduce}"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-                </div>
-            </div>
-        </div>
-        <div class="search-input">
-            <div class="search-input-inner">
-                <div class="search-input-middle">
-                    <input type="text" placeholder="검색" name="search" id="search" th:value="${keyword}" onclick="historyLog()">
-                    <img src="/local-images/send.png" alt="" width="20px" class="search-send-btn" onclick="searchBtn()">
-                </div>
-                <div class="search-sort" th:if="${keyword != null and keyword != ''}">
-                    <ul>
-                        <li><button class="sort-btn" th:value="'viewst'" th:classappend="${sort} == 'viewst' ? 'active' : ''">인기 게시물</button></li>
-                        <li><button class="sort-btn" th:value="'latest'" th:classappend="${sort} == 'latest' ? 'active' : ''">최신 게시물</button></li>
-                        <li><button class="sort-btn" th:value="'user'" th:classappend="${sort} == 'user' ? 'active' : ''">사용자</button></li>
-                    </ul>
-                </div>
-                <div>
-                    <ul>
-                        <li>1</li>
-                        <li>2</li>
-                        <li>3</li>
-                    </ul>
-                </div>
-            </div>
-            <!-- 검색 결과가 있을 때만 보여줌 -->
-            <div th:if="${boardList != null}">
-                <div th:each="board : ${boardList}">
-                    <p th:text="${board.boardContent}"></p>
-                </div>
-            </div>
-            <!-- 검색 안 한 상태에서는 메시지 -->
-            <div th:if="${boardList == null}">
-                <p>검색어를 입력하고 버튼을 눌러보세요 🔍</p>
             </div>
         </div>
     </div>
@@ -171,26 +240,229 @@
     });
 
 
+    // 검색 기록 클릭시 검색어에 등록이됨
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll('.history-btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const historyValue = button.dataset.history;
+
+                // 선택된 정렬 값 가져오기 (기본값은 viewst)
+                const activeSort = document.querySelector('.sort-btn.active');
+                const sortValue = activeSort ? activeSort.value : 'viewst';
+
+                // 검색어 + 정렬 파라미터로 이동
+                const query = new URLSearchParams();
+                query.append('keyword', historyValue);
+                query.append('sort', sortValue);
+
+                location.href = '/search?' + query.toString();
+
+            });
+        });
+    });
+
+
     // 최근 검색기록 검색 기록 보내기 저장
     function saveSearchKeywordToServer(keyword) {
+        const historyContainer = document.getElementById("history-container");
+        const li = document.createElement("li");
+
         fetch('/search-history', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ keyword: keyword })
+            body: JSON.stringify({keyword: keyword})
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("서버 에러 발생");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("검색어 저장 성공:", data);
-        })
-        .catch(error => {
-            console.error("검색어 저장 실패:", error);
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("서버 에러 발생");
+                }
+                return response.json();
+            })
+            .then(data => {
+                historyContainer.prepend(li); // 최근 검색어가 위로 오도록 추가
+
+                console.log("검색어 저장 성공:", data);
+            })
+            .catch(error => {
+                console.error("검색어 저장 실패:", error);
+            });
     }
+
+    //검색어 삭제기능
+    document.addEventListener("DOMContentLoaded", function () {
+        const buttons = document.querySelectorAll('.history-delete');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function () {
+                const deleteValue = button.dataset.delete;
+                const li = button.closest('li'); // 해당 li 요소
+
+                fetch('/search-delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({deleteValue: deleteValue})
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("서버 에러 발생");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log("검색어 삭제 성공:", data);
+                        // 화면에서 바로 삭제
+                        if (li) {
+                            li.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("검색어 삭제 실패:", error);
+                    });
+            });
+        });
+    });
+
+
+    // 이미지 슬라이드 a 링크 막기
+    // 이미지 슬라이 버튼 클릭시 a 태그로 가는 이동 막기
+    document.querySelectorAll('.board-slide-left, .board-slide-right')
+        .forEach(btn => {
+            btn.addEventListener('click', function(event) {
+                event.preventDefault();      // a 태그 이동 막기
+                event.stopPropagation();    // 부모 요소로 이벤트 전파도 막기
+
+                // 슬라이드 로직 실행
+                console.log("슬라이드 버튼 클릭!");
+            });
+        });
+
+    // 현재 시간에서 - 게실물 올린 시간 나타내기 일주일까지만
+    document.addEventListener("DOMContentLoaded", function () {
+        const timeElements = document.querySelectorAll(".time");
+
+        timeElements.forEach(element => {
+            const boardTime = new Date(element.getAttribute("data-time")); // 게시물 시간
+            const now = new Date(); // 현재 시간
+
+            const diff = Math.floor((now - boardTime) / 1000); // 초 단위 차이
+
+            let timeAgo;
+            if (diff < 60) {
+                timeAgo = "방금 전";
+            } else if (diff < 3600) {
+                timeAgo = Math.floor(diff / 60) + "분 전";
+            } else if (diff < 86400) {
+                timeAgo = Math.floor(diff / 3600) + "시간 전";
+            } else if (diff < 604800) {
+                timeAgo = Math.floor(diff / 86400) + "일 전";
+            } else {
+                timeAgo = boardTime.toISOString().split("T")[0]; // 1주 이상이면 날짜 표시
+            }
+
+            element.textContent = timeAgo;
+        });
+    });
+
+    // 게시물 이미지 슬라이드
+    document.addEventListener("DOMContentLoaded", function () {
+        const sliders = document.querySelectorAll(".board-img-list-inner");
+
+        sliders.forEach(slider => {
+            const imgContainer = slider.querySelectorAll(".board-list");
+            const images = Array.from(imgContainer);
+            const leftBtn = slider.querySelector(".board-slide-left");
+            const rightBtn = slider.querySelector(".board-slide-right");
+            let currentIndex = 0;
+            const imgWidth = 285; // 이미지 크기 (275px + 여백 25px 고려)
+            const maxIndex = images.length - 2; // ✅ 최대 이동 가능 인덱스
+
+            // 슬라이드 이동 함수
+            function updateSlide() {
+                const offset = -(currentIndex * imgWidth);
+                imgContainer.forEach(img => img.style.transform = `translateX(${offset}px)`);
+
+                // 왼쪽 버튼 제어
+                leftBtn.style.display = currentIndex > 0 ? 'block' : 'none';
+
+                // 오른쪽 버튼 제어
+                rightBtn.style.display = currentIndex >= maxIndex ? 'none' : 'block';
+            }
+
+            // ⬅️ 왼쪽 이동
+            leftBtn.addEventListener("click", function () {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateSlide();
+                }
+            });
+
+            // ➡️ 오른쪽 이동
+            rightBtn.addEventListener("click", function () {
+                if (currentIndex < maxIndex) {
+                    currentIndex++;
+                    updateSlide();
+                }
+            });
+
+            // 초기 슬라이드 상태 업데이트
+            updateSlide();
+        });
+    });
+
+    document.addEventListener("DOMContentLoaded",function (){
+        const btns = document.querySelectorAll(".boardLike-btn");
+
+        btns.forEach(btn => {
+            const boardIdx = btn.dataset.boardIdx;
+            const likeCountSpan = btn.parentElement.querySelector(".board-like-count");
+
+            fetch(`/board/like-status/${boardIdx}`,{
+                method: "GET",
+                headers: {
+                    "Content-Type" : "application/json"
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === "liked"){
+                        btn.textContent = "❤️";
+                        likeCountSpan.textContent = data.likeCount;
+                    } else if(data.status === "not_liked"){
+                        btn.textContent = "🖤";
+                        likeCountSpan.textContent = data.likeCount;
+                    }
+                })
+                .catch(error => console.error("Error :", error));
+
+            btn.addEventListener("click",function (){
+                fetch(`/board/like/${boardIdx}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":"application/json"
+                    }
+                })
+                    .then(response => {
+                        if(response.status === 401){
+                            alert("로그인을 해주시기 바랍니다");
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if(data.status === "added"){
+                            btn.textContent = "❤️";
+                            likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
+                        } else if(data.status === "removed"){
+                            btn.textContent = "🖤";
+                            likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
+                        }
+                    })
+                    .catch(error => console.error("Error :", error));
+            });
+        });
+    });
 </script>
