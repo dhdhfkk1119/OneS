@@ -32,8 +32,7 @@ public class Message {
     private LocalDateTime sendAt;
 
     @Column(nullable = false)
-    private boolean read;
+    private boolean isRead;
 
-    @Column(nullable = false)
     private String imagesContent;
 }

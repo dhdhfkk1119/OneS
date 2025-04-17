@@ -12,6 +12,6 @@ import lombok.Setter;
 public class MessageDTO {
     private Long senderIdx;
     private Long receiverIdx;
-    private String contentIdx;
+    private String content;
     private String imagesContent;
 }

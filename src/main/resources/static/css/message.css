@@ -21,10 +21,50 @@ body{
     color: black;
 }
 .message-list {
-    width: 30%;
     border-right: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
+}
+
+.message-web-list {
+    flex: 1;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.message-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.left-span {
+    justify-content: flex-start;
+}
+
+.right-span {
+    justify-content: flex-end;
+}
+
+.receive-message, .send-message {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: inline-block;
+    word-break: break-word;
+}
+
+.receive-message {
+    background-color: #f1f0f0;
+    color: #000;
+    border-top-left-radius: 0;
+}
+
+.send-message {
+    background-color: #0084ff;
+    color: #fff;
+    border-top-right-radius: 0;
 }
 
 .message {
@@ -37,7 +77,10 @@ body{
     height: 100%;
     overflow: hidden;
 }
-
+.message p {
+    padding: 0;
+    margin: 0;
+}
 .message-list-input {
     width: 100%;
     padding: 8px 0 ;
