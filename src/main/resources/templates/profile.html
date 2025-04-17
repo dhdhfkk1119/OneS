@@ -80,8 +80,8 @@
                             </a>
                         </span>
                     </div>
-                    <a href="/boardWrite">
-                        <button th:if="${loginMember.idx == member.idx}" class="write-btn">게시물 작성</button>
+                    <a href="/boardWrite" sec:authorize="isAuthenticated()">
+                        <button  th:if="${loginMember.idx == member.idx}" class="write-btn">게시물 작성</button>
                     </a>
                 </div>
             </div>
