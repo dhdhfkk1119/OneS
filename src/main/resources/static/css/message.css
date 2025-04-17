@@ -26,48 +26,6 @@ body{
     box-sizing: border-box;
 }
 
-.message-web-list {
-    flex: 1;
-    flex-direction: column;
-    padding: 10px;
-    overflow-y: scroll;
-}
-
-.message-row {
-    display: flex;
-    margin-bottom: 8px;
-}
-
-.left-span {
-    justify-content: flex-start;
-}
-
-.right-span {
-    justify-content: flex-end;
-}
-
-.receive-message, .send-message {
-    max-width: 60%;
-    padding: 10px 15px;
-    border-radius: 18px;
-    font-size: 14px;
-    line-height: 1.4;
-    display: inline-block;
-    word-break: break-word;
-}
-
-.receive-message {
-    background-color: #f1f0f0;
-    color: #000;
-    border-top-left-radius: 0;
-}
-
-.send-message {
-    background-color: #0084ff;
-    color: #fff;
-    border-top-right-radius: 0;
-}
-
 .message {
     display: flex;
     flex-direction: column;
@@ -191,4 +149,58 @@ body{
 .compose-input button {
     border: 1px solid #ccc;
     padding: 8px 16px;
+}
+
+/* 메세지 기능에 대한 css */
+.message-web-list {
+    flex: 1;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: scroll;
+}
+
+.message-row {
+    display: flex;
+    margin-bottom: 8px;
+}
+
+.left-span {
+    justify-content: flex-start;
+}
+
+.right-span {
+    justify-content: flex-end;
+}
+
+.receive-message, .send-message {
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    font-size: 14px;
+    line-height: 1.4;
+    display: inline-block;
+    word-break: break-word;
+}
+
+.receive-message {
+    background-color: #f1f0f0;
+    color: #000;
+    border-top-left-radius: 0;
+}
+
+.send-message {
+    background-color: #0084ff;
+    color: #fff;
+    border-top-right-radius: 0;
+}
+
+.message-meta {
+    margin-top: 4px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: #888;
+}
+.read-check {
+    margin-left: 8px;
 }

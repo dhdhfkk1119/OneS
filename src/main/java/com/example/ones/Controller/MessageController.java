@@ -4,6 +4,8 @@ import com.example.ones.Entity.Member;
 import com.example.ones.Entity.Message;
 import com.example.ones.Repository.MemberRepository;
 import com.example.ones.Repository.MessageRepository;
+import com.example.ones.Service.MemberService;
+import com.example.ones.Service.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -20,6 +23,7 @@ public class MessageController {
 
     private final MemberRepository memberRepository;
     private final MessageRepository messageRepository;
+    private final MessageService messageService;
 
     @GetMapping("/message/{idx}")
     public String message(@PathVariable("idx") Long idx, Model model, Principal principal) {
@@ -32,6 +36,9 @@ public class MessageController {
                 .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
 
         List<Message> messageList = messageRepository.findMessagesBetweenUsers(loginUser.getIdx(), targetUser.getIdx());
+
+        // ✅ 상대방이 나에게 보낸 메시지 중 안 읽은 거 읽음 처리
+        messageService.markMessagesAsRead(targetUser.getIdx(),loginUser.getIdx());
 
         model.addAttribute("login", loginUser);
         model.addAttribute("member", targetUser);

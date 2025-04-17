@@ -91,12 +91,22 @@
             <div class="message-web-list" id="messageContainer">
                 <div th:each="msg : ${messages}">
                     <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
-                        <span th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
+                        <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
+                            <!-- 메세지 내용 -->
                             <p th:text="${msg.content}"></p>
-                        </span>
+
+                            <!-- 보낸 시간 + 읽음 여부 -->
+                            <div class="message-meta">
+                                <!-- 시간 -->
+                                <small th:text="${#temporals.format(msg.sendAt, 'HH:mm')}"></small>
+
+                                <!-- 읽음 여부 (내가 보낸 메시지일 때만) -->
+                                <small th:if="${msg.senderIdx == login.idx}" class="read-check" th:text="${msg.read} ? '✔️읽음' : ''"></small>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div> <!-- 여백 -->
+            </div>
 
 
             <div class="message-compose">
