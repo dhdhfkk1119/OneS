@@ -12,4 +12,10 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Integer> {
     List<Message> findBySenderIdxAndReceiverIdxOrReceiverIdxAndSenderIdx(
             Long sender1, Long receiver1, Long sender2, Long receiver2);
+
+    @Query("SELECT m FROM Message m WHERE " +
+            "(m.senderIdx = :senderIdx AND m.receiverIdx = :receiverIdx) OR " +
+            "(m.senderIdx = :receiverIdx AND m.receiverIdx = :senderIdx) " +
+            "ORDER BY m.sendAt ASC")
+    List<Message> findMessagesBetweenUsers(@Param("senderIdx") Long senderIdx, @Param("receiverIdx") Long receiverIdx);
 }

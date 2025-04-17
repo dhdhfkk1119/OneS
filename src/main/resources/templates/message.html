@@ -88,9 +88,15 @@
                 <div th:text="${member.follow}">팔로워: 512명</div>
                 <div>팔로잉 상태: 서로 팔로우 중</div>
             </div>
-            <div  class="message-web-list" id="messageContainer">
+            <div class="message-web-list" id="messageContainer">
+                <div th:each="msg : ${messages}">
+                    <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
+                        <span th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
+                            <p th:text="${msg.content}"></p>
+                        </span>
+                    </div>
+                </div>
             </div> <!-- 여백 -->
-
 
 
             <div class="message-compose">

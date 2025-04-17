@@ -30,6 +30,7 @@ body{
     flex: 1;
     flex-direction: column;
     padding: 10px;
+    overflow-y: scroll;
 }
 
 .message-row {
