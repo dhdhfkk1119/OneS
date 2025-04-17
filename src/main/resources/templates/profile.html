@@ -68,19 +68,21 @@
                 <div class="follow-inner">
                     <div>
                         <span>
-                            <a href="/follower">
+                            <a th:href="@{${'/follower/' + member.idx}}">
                                 <span class="follow-count follower-count" th:text="${member.follow}">0</span>
                                 <span class="follow">팔로워</span>
                             </a>
                         </span>
                         <span class="following">
-                            <a href="/follower">
+                            <a th:href="@{${'/follower/' + member.idx}}">
                                 <span class="follow-count following-count" th:text="${member.following}">0</span>
                                 <span class="follow">팔로잉</span>
                             </a>
                         </span>
                     </div>
-                    <a href="/boardWrite"><button class="write-btn">게시물 작성</button></a>
+                    <a href="/boardWrite">
+                        <button th:if="${loginMember.idx == member.idx}" class="write-btn">게시물 작성</button>
+                    </a>
                 </div>
             </div>
         </div>
@@ -120,7 +122,8 @@
                 <label for="introduce">
                     <span>자기 소개</span>
                 </label>
-                <textarea type="text" maxlength="160" id="introduce" th:text="${member.introduce}" th:value="${member.introduce}"
+                <textarea type="text" maxlength="160" id="introduce" th:text="${member.introduce}"
+                          th:value="${member.introduce}"
                           placeholder="자기소개를 적어주세요 / 160자"></textarea>
             </div>
 
@@ -481,7 +484,7 @@
 <script th:inline="javascript">
 
     // 로그인하지 않았을 경우 메세지 누르면 못 넘어가게
-    function message(event){
+    function message(event) {
         event.preventDefault(); // 기본 이동 막기
 
         const isLoggedIn = /*[[${#authorization.expression('isAuthenticated()')}]]*/ false;
@@ -498,7 +501,7 @@
     // 이미지 슬라이드 이동하는 태그 막기
     document.querySelectorAll('.board-slide-left, .board-slide-right')
         .forEach(btn => {
-            btn.addEventListener('click', function(event) {
+            btn.addEventListener('click', function (event) {
                 event.preventDefault();      // a 태그 이동 막기
                 event.stopPropagation();    // 부모 요소로 이벤트 전파도 막기
 
@@ -515,7 +518,7 @@
 
         commentToggles.forEach(toggle => {
             toggle.addEventListener("click", function () {
-                if(!isLoggedIn){
+                if (!isLoggedIn) {
                     alert("로그인 해주세요");
                     window.location.href = "/login";  // 로그인 페이지로 이동
                     return;
@@ -558,7 +561,7 @@
     });
 
     // 게실물 이미지 버튼
-    function ImgUpload(event){
+    function ImgUpload(event) {
         event.preventDefault(); // 기본 이벤트(폼 제출) 방지
         document.querySelector(".upload-btn").click();
     }
@@ -630,9 +633,9 @@
                 imgWrapper.appendChild(img);
                 imgWrapper.appendChild(closeBtn);
                 previewContainer.appendChild(imgWrapper);
-                if(isComment){
+                if (isComment) {
                     initComentSlider();
-                }else{
+                } else {
                     initBoardSlider();
                 }
             };
@@ -902,49 +905,49 @@
     });
 
     // 게시물 찜하기 기능
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const btns = document.querySelectorAll(".boardLike-btn");
 
         btns.forEach(btn => {
             const boardIdx = btn.dataset.boardIdx;
             const likeCountSpan = btn.parentElement.querySelector(".board-like-count");
 
-            fetch(`/board/like-status/${boardIdx}`,{
+            fetch(`/board/like-status/${boardIdx}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type" : "application/json"
+                    "Content-Type": "application/json"
                 }
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.status === "liked"){
+                    if (data.status === "liked") {
                         btn.textContent = "❤️";
                         likeCountSpan.textContent = data.likeCount;
-                    } else if(data.status === "not_liked"){
+                    } else if (data.status === "not_liked") {
                         btn.textContent = "🖤";
                         likeCountSpan.textContent = data.likeCount;
                     }
                 })
                 .catch(error => console.error("Error :", error));
 
-            btn.addEventListener("click",function (){
+            btn.addEventListener("click", function () {
                 fetch(`/board/like/${boardIdx}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     }
                 })
                     .then(response => {
-                        if(response.status === 401){
+                        if (response.status === 401) {
                             alert("로그인을 해주시기 바랍니다");
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if(data.status === "added"){
+                        if (data.status === "added") {
                             btn.textContent = "❤️";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                        } else if(data.status === "removed"){
+                        } else if (data.status === "removed") {
                             btn.textContent = "🖤";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
                         }
@@ -955,49 +958,49 @@
     });
 
     // 댓글 찜하기 기능
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const btns = document.querySelectorAll(".comment-like-btn");
 
         btns.forEach(btn => {
             const commentIdx = btn.dataset.commentIdx;
             const likeCountSpan = btn.parentElement.querySelector(".comment-like-count");
 
-            fetch(`/comment_like/status/${commentIdx}`,{
+            fetch(`/comment_like/status/${commentIdx}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type" : "application/json"
+                    "Content-Type": "application/json"
                 }
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.status === "liked"){
+                    if (data.status === "liked") {
                         btn.textContent = "❤️";
                         likeCountSpan.textContent = data.likeCount;
-                    } else if(data.status === "not_liked"){
+                    } else if (data.status === "not_liked") {
                         btn.textContent = "🖤";
                         likeCountSpan.textContent = data.likeCount;
                     }
                 })
                 .catch(error => console.error("Error :", error));
 
-            btn.addEventListener("click",function (){
+            btn.addEventListener("click", function () {
                 fetch(`/comment_like/${commentIdx}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     }
                 })
                     .then(response => {
-                        if(response.status === 401){
+                        if (response.status === 401) {
                             alert("로그인을 해주시기 바랍니다");
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if(data.status === "added"){
+                        if (data.status === "added") {
                             btn.textContent = "❤️";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                        } else if(data.status === "removed"){
+                        } else if (data.status === "removed") {
                             btn.textContent = "🖤";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
                         }
@@ -1028,72 +1031,72 @@
 
     // 팔로우하기 기능 API
     document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.querySelector(".follow-btn");
-    const memberIdx = btn.dataset.memberIdx;
-    const followingCountSpan = document.querySelector(".follower-count");
+        const btn = document.querySelector(".follow-btn");
+        const memberIdx = btn.dataset.memberIdx;
+        const followingCountSpan = document.querySelector(".follower-count");
 
 
-    fetch(`/profile/follow/${memberIdx}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json"
-        }
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "following") {
-                btn.textContent = "팔로잉";
-                btn.classList.add("active");
-                followingCountSpan.textContent = data.followCount;
-            } else if (data.status === "mutual") {
-                btn.textContent = "맞팔로우 하기";
-                btn.classList.remove("active");
-                followingCountSpan.textContent = data.followCount;
-            } else if (data.status === "not_following") {
-                btn.textContent = "팔로우 하기";
-                btn.classList.remove("active");
-                followingCountSpan.textContent = data.followCount;
-            }
-        })
-        .catch(error => console.error("Error:", error));
-
-    btn.addEventListener("click", function () {
-        const isFollowing = btn.classList.contains("active");
-
-        // 언팔로우하려는 경우
-        if (isFollowing) {
-            const confirmUnfollow = confirm("팔로잉을 취소하시겠습니까?");
-            if (!confirmUnfollow) {
-                return; // 사용자가 취소 누르면 아무 동작도 하지 않음
-            }
-        }
-
-        fetch(`/profile/following/${memberIdx}`, {
-            method: "POST",
+        fetch(`/profile/follow/${memberIdx}`, {
+            method: "GET",
             headers: {
                 "Content-Type": "application/json"
             }
         })
-            .then(response => {
-                if (response.status === 401) {
-                    alert("로그인을 해주시기 바랍니다");
-                    window.location.href = "/login";
-                    return;
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
-                if (data.status === "added") {
+                if (data.status === "following") {
                     btn.textContent = "팔로잉";
                     btn.classList.add("active");
-                    followingCountSpan.textContent = Number(followingCountSpan.textContent) +1;
-                } else if (data.status === "removed") {
+                    followingCountSpan.textContent = data.followCount;
+                } else if (data.status === "mutual") {
+                    btn.textContent = "맞팔로우 하기";
+                    btn.classList.remove("active");
+                    followingCountSpan.textContent = data.followCount;
+                } else if (data.status === "not_following") {
                     btn.textContent = "팔로우 하기";
                     btn.classList.remove("active");
-                    followingCountSpan.textContent = Number(followingCountSpan.textContent) -1;
+                    followingCountSpan.textContent = data.followCount;
                 }
             })
             .catch(error => console.error("Error:", error));
+
+        btn.addEventListener("click", function () {
+            const isFollowing = btn.classList.contains("active");
+
+            // 언팔로우하려는 경우
+            if (isFollowing) {
+                const confirmUnfollow = confirm("팔로잉을 취소하시겠습니까?");
+                if (!confirmUnfollow) {
+                    return; // 사용자가 취소 누르면 아무 동작도 하지 않음
+                }
+            }
+
+            fetch(`/profile/following/${memberIdx}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        alert("로그인을 해주시기 바랍니다");
+                        window.location.href = "/login";
+                        return;
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.status === "added") {
+                        btn.textContent = "팔로잉";
+                        btn.classList.add("active");
+                        followingCountSpan.textContent = Number(followingCountSpan.textContent) + 1;
+                    } else if (data.status === "removed") {
+                        btn.textContent = "팔로우 하기";
+                        btn.classList.remove("active");
+                        followingCountSpan.textContent = Number(followingCountSpan.textContent) - 1;
+                    }
+                })
+                .catch(error => console.error("Error:", error));
         });
     });
 
@@ -1120,17 +1123,17 @@
     });
 
     // 이름 및 이미지 변경
-    function SaveBtn(){
+    function SaveBtn() {
         const userName = document.getElementById("userName").value;
         const introduce = document.getElementById("introduce").value;
         const file = document.getElementById("profileImageInput").files[0];
 
         const formData = new FormData();
-        if (file){
+        if (file) {
             formData.append("file", file);
         }
         formData.append("userName", userName);
-        formData.append("introduce",introduce);
+        formData.append("introduce", introduce);
 
         fetch("/profile/update", {
             method: "POST",
