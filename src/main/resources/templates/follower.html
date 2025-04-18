@@ -148,7 +148,7 @@
                                     </div>
                                     <div class="follow-btn-list">
                                         <div th:if="${member == null or member.idx != m.idx}" class="edit-nosession">
-                                            <a th:href="@{${'/message/' + member.idx}}" class="edit-message"
+                                            <a th:href="@{${'/message/' + m.idx}}" class="edit-message"
                                                onclick="message(event)"
                                                th:data-idx="${member.idx}">
                                                 <img th:src="@{'/local-images/conversation.png'}" alt="" width="24px">

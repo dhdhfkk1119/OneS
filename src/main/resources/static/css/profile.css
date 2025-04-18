@@ -57,6 +57,7 @@
     position: absolute;
     top: 25px;
     right: 0;
+    display: flex;
 }
 .follow-btn.active {
     background-color: #333;
@@ -222,6 +223,7 @@
 }
 .edit-nosession {
     display: flex;
+
     align-items: center;
 }
 .edit-message {

@@ -31,13 +31,13 @@
                     <span>알림</span>
                 </div>
             </a>
-            <a th:href="@{${'/message/' + memberIdx}}">
+            <a th:href="@{${'/message/' + login.idx}}">
                 <div class="nav-item">
                     <img th:src="@{'/local-images/email.png'}" alt="">
                     <span>쪽지</span>
                 </div>
             </a>
-            <a th:href="@{${'/profile/' + memberIdx}}">
+            <a th:href="@{${'/profile/' + login.idx}}">
                 <div class="nav-item">
                     <img th:src="@{'/local-images/profile-user.png'}" alt="">
                     <span>프로필</span>
@@ -50,77 +50,134 @@
                 </div>
             </a>
 
+            <a th:href="@{${'/profile/' + login.idx}}">
             <div class="bottom-profile">
                 <img th:src="@{${'/profile-images/' + login.userImage}}" alt="프로필">
                 <div>
                     <div class="bottom-name" th:text="${login.userName}"></div>
-                    <div class="bottom-id" th:text="${login.userId}"></div>
+                    <div class="bottom-id" th:text="${'@'+login.userId}"></div>
                 </div>
             </div>
+            </a>
         </div>
 
         <!-- 2. Message List -->
         <div class="message-list">
             <div class="message-header">
-                <span>쪽지</span>
-                <button style="float:right;">메세지 추가하기</button>
+                <span style="display: flex; gap: 5px; align-items: center;">
+                    <span><img th:src="@{'/local-images/email.png'}" alt="" width="20px" style="display: flex;"></span>
+                    <span>쪽지</span>
+                </span>
+                <div class="message-add">
+                    <img src="/local-images/plus.png" alt="" width="25px">
+                </div>
             </div>
             <input type="text" placeholder="쪽지 검색하기" class="message-list-input">
-            <div class="message-items">
+            <div class="message-items" th:each="sendUser : ${sendUserList}">
                 <!-- 반복 렌더링 되는 쪽지 리스트 -->
-                <div class="message-item">김철수</div>
-                <div class="message-item">이영희</div>
+                <div class="message-item"
+                     th:classappend="${isAllReadMap[sendUser.idx]} ? ' read-check'"
+                     onclick="UserChange(this)"
+                     th:data-useridx="${sendUser.idx}">
+                    <img th:src="@{${'/profile-images/' + sendUser.userImage}}" alt="" width="50px">
+                    <div>
+                        <div>
+                            <span class="userName" th:text="${sendUser.userName}"></span>
+                            <span class="userId" th:text="${'@' +sendUser.userId}"></span>
+                        </div>
+                        <div>
+                            <span class="recently-message" th:text="${recentlyMessage[sendUser.idx]?.content}"></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- ... -->
             </div>
         </div>
 
         <!-- 3. Message Detail -->
-        <div class="message">
-            <div class="user-details">
-                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
-                <div th:text="${member.userName}"></div>
-                <div th:text="${member.userId}"></div>
-                <div th:text="${member.introduce}"></div>
-                <div class="user-calendar">
-                    <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
-                    <span th:text="${member.userAt}">가입일: 2022-05-20</span>
-                </div>
-                <div th:text="${member.follow}">팔로워: 512명</div>
-                <div>팔로잉 상태: 서로 팔로우 중</div>
+        <div class="message" th:if="${member.idx != login.idx}">
+           <div class="user-details">
+               <a th:href="@{${'/profile/' + member.idx}}">
+                   <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
+               </a>
+               <div th:text="${member.userName}"></div>
+               <div th:text="${member.userId}"></div>
+               <div th:text="${member.introduce}"></div>
+               <div class="user-calendar">
+                   <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
+                   <span th:text="${member.userAt}">가입일: 2022-05-20</span>
+               </div>
+               <div class="follower-all">
+                   <div class="follow-comparison" th:data-member-idx="${member.idx}">
+                       <span class="comparison"></span>
+                   </div>
+                   <div th:text="${'팔로워 :' + member.follow}">
+
+                   </div>
+               </div>
+
+           </div>
+           <div class="message-web-list" id="messageContainer">
+               <div th:each="msg : ${messages}">
+                   <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
+                       <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
+                           <!-- 메세지 내용 -->
+                           <p th:text="${msg.content}"></p>
+
+                           <!-- 보낸 시간 + 읽음 여부 -->
+                           <div class="message-meta">
+                               <!-- 시간 -->
+                               <small class="send-at" th:text="${#temporals.format(msg.sendAt, 'HH:mm')}"></small>
+
+                               <!-- 읽음 여부 (내가 보낸 메시지일 때만) -->
+                               <small th:if="${msg.senderIdx == login.idx}" class="read-check" th:text="${msg.read} ? '✔️읽음' : ''"></small>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+
+            <!--  메세지를 받는 유저의 정보를 나타냄 -->
+           <div class="message-compose">
+               <div class="compose-input">
+                   <label for="imageUpload" style="cursor: pointer;display: flex">
+                       <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
+                   </label>
+                   <input type="hidden" id="loginIdx" th:value="${login.idx}">
+                   <input type="hidden" id="targetIdx" th:value="${member.idx}">
+                   <input type="file" id="imageUpload" style="display: none;">
+                   <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
+                   <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
+               </div>
+           </div>
+       </div>
+
+        <!-- message Detail loginidx == memberidx -->
+        <div class="message message-list-my message-add" th:if="${member.idx == login.idx}">
+            <div class="message-compose-box">
+                <span>
+                    <img src="/local-images/plus.png" alt="" width="25px">
+                </span>
+                <span class="message-text ">
+                    쪽지를 한번 작성해 보실래요?!!
+                </span>
             </div>
-            <div class="message-web-list" id="messageContainer">
-                <div th:each="msg : ${messages}">
-                    <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
-                        <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
-                            <!-- 메세지 내용 -->
-                            <p th:text="${msg.content}"></p>
-
-                            <!-- 보낸 시간 + 읽음 여부 -->
-                            <div class="message-meta">
-                                <!-- 시간 -->
-                                <small th:text="${#temporals.format(msg.sendAt, 'HH:mm')}"></small>
-
-                                <!-- 읽음 여부 (내가 보낸 메시지일 때만) -->
-                                <small th:if="${msg.senderIdx == login.idx}" class="read-check" th:text="${msg.read} ? '✔️읽음' : ''"></small>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        </div>
 
 
-            <div class="message-compose">
-                <div class="compose-input">
-                    <label for="imageUpload" style="cursor: pointer;display: flex">
-                        <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
-                    </label>
-                    <input type="hidden" id="loginIdx" th:value="${login.idx}">
-                    <input type="hidden" id="targetIdx" th:value="${member.idx}">
-                    <input type="file" id="imageUpload" style="display: none;">
-                    <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
-                    <button onclick="sendMessage()">보내기</button>
-                </div>
-            </div>
+
+        <!-- 쪽지를 추가하는 팝업 창 -->
+        <div class="message-popup hidden"> <!-- 초기에 숨겨둠 -->
+            <div class="popup-header">쪽지 보낼 친구 선택</div>
+            <ul class="popup-user-list">
+                <!-- 여기에 유저 반복문으로 삽입 -->
+                <li class="popup-user-item" th:each="follow : ${followList}"
+                    th:data-useridx="${follow.idx}">
+                    <img th:src="@{${'/profile-images/' + follow.userImage}}" alt="" width="25px">
+                    <span  th:text="${follow.userName}"></span>
+                </li>
+            </ul>
         </div>
     </div>
 </th:block>
@@ -129,6 +186,24 @@
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 <script>
+
+    // 쪽지 보내기 프롤스 버튼 눌러서 팝업 등장
+    document.querySelectorAll(".message-add").forEach(btn => {
+        btn.addEventListener("click",() => {
+            const popup = document.querySelector(".message-popup");
+            popup.classList.toggle("show");
+        });
+    });
+
+    // 유저 클릭 시 해당 메시지 페이지로 이동
+    document.querySelectorAll(".popup-user-item").forEach(item => {
+        item.addEventListener("click", () => {
+            const userIdx = item.dataset.useridx;
+            window.location.href = `/message/${userIdx}`;
+        });
+    });
+
+
     let stompClient = null;
 
     function connectSocket() {
@@ -147,45 +222,145 @@
         });
     }
 
+    // 직접 메세지를 chat/send 로 보내준다
     function sendMessage() {
         const senderIdx = document.getElementById("loginIdx").value;
         const receiverIdx = document.getElementById("targetIdx").value;
         const message = document.getElementById("msgInput").value;
-
+        const now = new Date();
+        const sendAt = now.toISOString(); // ISO 8601 형식 (서버, JS 모두 호환)
 
         stompClient.send("/app/chat/send", {}, JSON.stringify({
             senderIdx: senderIdx,
             receiverIdx: receiverIdx,
             content: message,
+            sendAt: sendAt,
             imagesContent: ''
         }));
+
+        // 입력창 초기화
+        document.getElementById("msgInput").value = '';
+        document.getElementById("sendMessage").classList.add("deactive");
     }
+
+    // 메세지가 입력 될시에 활성화
+    const msgInput = document.getElementById("msgInput");
+    const msgBtn = document.getElementById("sendMessage");
+
+    // 입력값이 있을 때 버튼 활성화
+    msgInput.addEventListener("input", function (e) {
+        if (e.target.value.trim() === "") {
+            msgBtn.classList.add("deactive");
+        } else {
+            msgBtn.classList.remove("deactive");
+        }
+    });
+
+    // 엔터로 메시지 전송
+    msgInput.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    });
 
     const myIdx = [[${login.idx}]];
 
+    // 메세지를 받아서 보여주는 기능
     function showMessage(message) {
         const messageContainer = document.getElementById('messageContainer');
 
         const messageRow = document.createElement('div');
         messageRow.classList.add('message-row');
 
-        const bubble = document.createElement('span');
+        const bubble = document.createElement('div'); // span보다 div가 구조상 적절
         const p = document.createElement('p');
         p.textContent = message.content;
-        bubble.appendChild(p);
 
-        // 보낸 사람과 받은 사람 구분
+        // 메타 정보 wrapper (시간 + 읽음 여부)
+        const metaDiv = document.createElement('div');
+        metaDiv.classList.add('message-meta');
+
+        // 시간 포맷팅
+        const date = new Date(message.sendAt);
+        const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+
+        const spanTime = document.createElement('small');
+        spanTime.classList.add('send-at');
+        spanTime.textContent = formattedTime;
+        metaDiv.appendChild(spanTime);
+
+        // 읽음 여부 (내가 보낸 메시지일 경우만)
+        if (parseInt(message.senderIdx) === myIdx && message.read) {
+            const readCheck = document.createElement('small');
+            readCheck.classList.add('read-check');
+            readCheck.textContent = '✔️읽음';
+            metaDiv.appendChild(readCheck);
+        }
+
+        // 메시지 방향 및 스타일
         if (parseInt(message.senderIdx) === myIdx) {
-            messageRow.classList.add('right-span');
+            messageRow.classList.add('message-row', 'right-span');
             bubble.classList.add('send-message');
         } else {
-            messageRow.classList.add('left-span');
+            messageRow.classList.add('message-row', 'left-span');
             bubble.classList.add('receive-message');
         }
 
+        bubble.appendChild(p);
+        bubble.appendChild(metaDiv);
         messageRow.appendChild(bubble);
         messageContainer.appendChild(messageRow);
+
+        // 최신 메시지로 스크롤
+        messageContainer.scrollTop = messageContainer.scrollHeight;
     }
 
     connectSocket();
+
+
+    // 메세지 목록에서 유저를 클릭해서 변경
+    function UserChange(element) {
+        const btns = document.querySelectorAll('.message-item');
+
+        btns.forEach(btn => {
+            btn.addEventListener("click", function () {
+                const userValue = btn.dataset.useridx;
+                // 페이지 전체 이동으로 교체
+                window.location.href = `/message/${userValue}`;
+            });
+        });
+
+        // 메시지 리스트에서 읽은 항목에 read-check 클래스 추가
+        element.classList.add('read-check');
+
+        // 아래는 원래 하던 동작 (유저 전환 등)
+        const userIdx = element.dataset.useridx;
+        console.log("대화 유저 idx:", userIdx);
+    }
+
+
+
+    //팔로우 체크 기능
+    document.addEventListener("DOMContentLoaded", function () {
+        const memberIdx = document.querySelector(".follow-comparison").dataset.memberIdx;
+        const comparison = document.querySelector(".comparison");
+
+        fetch(`/profile/follow/${memberIdx}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "following") {
+                    comparison.textContent = "내가 팔로우 하고있음";
+                } else if (data.status === "mutual") {
+                    comparison.textContent = "나를 팔로우 하고 있음";
+                } else if (data.status === "not_following") {
+                    comparison.textContent = "팔로우 아직 하지 않음";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
 </script>

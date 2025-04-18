@@ -28,10 +28,14 @@ public class MessageService {
         message.setContent(dto.getContent());
         message.setImagesContent(dto.getImagesContent());
         message.setSendAt(LocalDateTime.now());
+        dto.setSendAt(LocalDateTime.now());
         message.setRead(false);
 
         messageRepository.save(message);
+
     }
+
+
 
     // 메시지 읽음 처리 기능
     @Transactional

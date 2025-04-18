@@ -32,12 +32,16 @@
 
             <!-- 수정 버튼 -->
             <div class="edit-profile">
-                <div th:if="${loginMember == null or loginMember.idx != member.idx}" class="edit-nosession">
-                    <a th:href="@{${'/message/' + member.idx}}" class="edit-message" onclick="message(event)"
+                <div class="edit-nosession">
+                    <a th:href="@{${'/message/' + member.idx}}" class="edit-message" onclick="message(event)" th:if="${loginMember == null or loginMember.idx != member.idx}"
                        th:data-idx="${member.idx}">
                         <img th:src="@{'/local-images/conversation.png'}" alt="" width="24px">
                     </a>
-                    <button class="follow-btn"
+                    <a th:href="@{${'/message/' + loginMember.idx}}" class="edit-message" onclick="message(event)" th:if="${loginMember == null or loginMember.idx == member.idx}"
+                       th:data-idx="${loginMember.idx}">
+                        <img th:src="@{'/local-images/conversation.png'}" alt="" width="24px">
+                    </a>
+                    <button class="follow-btn" th:if="${loginMember == null or loginMember.idx != member.idx}"
                             th:data-member-idx="${member.idx}">
                         팔로우 하기
                     </button>

@@ -20,9 +20,11 @@ body{
     text-decoration: none;
     color: black;
 }
+/* message  list 쪽지 보내는 유저 리스트 */
 .message-list {
     border-right: 1px solid #ccc;
     padding: 20px;
+    width: 30%;
     box-sizing: border-box;
 }
 
@@ -48,7 +50,25 @@ body{
     border: 1px solid #ccc;
     border-radius: 20px;
 }
-
+.message-add {
+    cursor: pointer;
+}
+.comparison {
+    padding: 5px;
+    background: #ccc;
+    border-radius: 8px;
+    color: #333;
+    font-size: 12px;
+    font-weight: 700;
+}
+.follower-all{
+    gap: 10px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
 .nav-item {
     display: flex;
     align-items: center;
@@ -78,6 +98,12 @@ body{
     bottom: 40px;
     display: flex;
     align-items: center;
+    padding: 5px 10px;
+}
+.bottom-profile:hover{
+    cursor: pointer;
+    background-color: #f5f5f5;
+    border-radius: 8px;
 }
 
 .bottom-profile img {
@@ -97,6 +123,8 @@ body{
     padding-bottom: 15px;
     border-bottom: 1px solid #ccc;
     margin: 0;
+    color:#333;
+    font-weight: 700;
     text-align: center;
 }
 .user-calendar {
@@ -123,16 +151,78 @@ body{
 .message-compose {
     padding: 15px 0;
 }
-
+.message-header {
+    display: flex;
+    justify-content:space-between;
+}
 .message-compose {
     width: 100%;
 }
 
 .message-items {
-    padding-top: 5px;
+    padding: 5px 0;
     border-top: 1px solid #ccc;
 }
+.message-item {
+    gap: 10px;
+    display: flex;
+    padding: 5px;
+}
+.message-item.read-check {
+    background: #e9e9e9;
+    border-radius: 8px;
+    color:white;
+}
+.message-item:hover{
+    cursor: pointer;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+}
+.message-compose-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* 아이콘과 텍스트 사이 여백 */
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
+.message-compose-box:hover {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+}
+
+.message-icon {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+}
+
+.message-text {
+    font-size: 14px;
+    color: #333;
+}
+.userName{
+    color:black;
+    font-weight: 700;
+}
+.userId {
+    color:grey;
+    font-weight: 400;
+}
+.recently-message{
+    padding-top: 5px;
+    color: #333;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4em;
+    max-height: 2.8em;
+}
 .compose-input {
     display: flex;
     align-items: center;
@@ -151,7 +241,9 @@ body{
     padding: 8px 16px;
 }
 
-/* 메세지 기능에 대한 css */
+
+
+/* ------------------------------- message 보내기 부문 css 시작----------------------*/
 .message-web-list {
     flex: 1;
     flex-direction: column;
@@ -203,4 +295,76 @@ body{
 }
 .read-check {
     margin-left: 8px;
+    color:black;
 }
+.send-at {
+    color:black;
+
+}
+
+.sendMessage {
+    background: #333;
+    border-radius: 8px;
+    color: white;
+    font-weight: 700;
+}
+.sendMessage.deactive {
+    cursor: none;
+    background: #dddddd;
+}
+/* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
+
+
+/* ---------------------------- follower 리스트 팝업 css 시작 -----------------------------*/
+/* 팝업 기본 스타일 */
+.message-popup {
+    position: absolute;
+    top: 60px; /* plus 버튼 기준 위치 조정 */
+    right: 20px;
+    width: 250px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 100;
+    padding: 10px;
+    display: none; /* JS에서 toggle */
+}
+
+/* 팝업 보여줄 때 */
+.message-popup.show {
+    display: block;
+}
+
+/* 헤더 */
+.popup-header {
+    font-weight: bold;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+    font-size: 15px;
+}
+
+/* 유저 리스트 */
+.popup-user-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.popup-user-item {
+    padding: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    border-radius: 6px;
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.popup-user-item:hover {
+    background-color: #f5f5f5;
+}
+/* ---------------------------- follower 리스트 팝업 css 끝 -----------------------------*/
