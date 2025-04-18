@@ -51,13 +51,13 @@
             </a>
 
             <a th:href="@{${'/profile/' + login.idx}}">
-            <div class="bottom-profile">
-                <img th:src="@{${'/profile-images/' + login.userImage}}" alt="프로필">
-                <div>
-                    <div class="bottom-name" th:text="${login.userName}"></div>
-                    <div class="bottom-id" th:text="${'@'+login.userId}"></div>
+                <div class="bottom-profile">
+                    <img th:src="@{${'/profile-images/' + login.userImage}}" alt="프로필">
+                    <div>
+                        <div class="bottom-name" th:text="${login.userName}"></div>
+                        <div class="bottom-id" th:text="${'@'+login.userId}"></div>
+                    </div>
                 </div>
-            </div>
             </a>
         </div>
 
@@ -76,15 +76,23 @@
             <div class="message-items" th:each="sendUser : ${sendUserList}">
                 <!-- 반복 렌더링 되는 쪽지 리스트 -->
                 <div class="message-item"
-                     th:classappend="${isAllReadMap[sendUser.idx]} ? ' read-check'"
+                     th:classappend="${unreadMessageCount[sendUser.idx]} != null ? 'unread-highlight' : ''"
                      onclick="UserChange(this)"
                      th:data-useridx="${sendUser.idx}">
+
                     <img th:src="@{${'/profile-images/' + sendUser.userImage}}" alt="" width="50px">
+
                     <div>
                         <div>
                             <span class="userName" th:text="${sendUser.userName}"></span>
-                            <span class="userId" th:text="${'@' +sendUser.userId}"></span>
+                            <span class="userId" th:text="${'@' + sendUser.userId}"></span>
+
+                            <!-- ! 알림 및 갯수 표시 -->
+                            <span th:if="${unreadMessageCount[sendUser.idx]} != null" class="unread-badge">
+                                ! <span th:text="${unreadMessageCount[sendUser.idx]}"></span>
+                            </span>
                         </div>
+
                         <div>
                             <span class="recently-message" th:text="${recentlyMessage[sendUser.idx]?.content}"></span>
                         </div>
@@ -97,61 +105,62 @@
 
         <!-- 3. Message Detail -->
         <div class="message" th:if="${member.idx != login.idx}">
-           <div class="user-details">
-               <a th:href="@{${'/profile/' + member.idx}}">
-                   <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
-               </a>
-               <div th:text="${member.userName}"></div>
-               <div th:text="${member.userId}"></div>
-               <div th:text="${member.introduce}"></div>
-               <div class="user-calendar">
-                   <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
-                   <span th:text="${member.userAt}">가입일: 2022-05-20</span>
-               </div>
-               <div class="follower-all">
-                   <div class="follow-comparison" th:data-member-idx="${member.idx}">
-                       <span class="comparison"></span>
-                   </div>
-                   <div th:text="${'팔로워 :' + member.follow}">
+            <div class="user-details">
+                <a th:href="@{${'/profile/' + member.idx}}">
+                    <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
+                </a>
+                <div th:text="${member.userName}"></div>
+                <div th:text="${member.userId}"></div>
+                <div th:text="${member.introduce}"></div>
+                <div class="user-calendar">
+                    <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
+                    <span th:text="${member.userAt}">가입일: 2022-05-20</span>
+                </div>
+                <div class="follower-all">
+                    <div class="follow-comparison" th:data-member-idx="${member.idx}">
+                        <span class="comparison"></span>
+                    </div>
+                    <div th:text="${'팔로워 :' + member.follow}">
 
-                   </div>
-               </div>
+                    </div>
+                </div>
 
-           </div>
-           <div class="message-web-list" id="messageContainer">
-               <div th:each="msg : ${messages}">
-                   <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
-                       <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
-                           <!-- 메세지 내용 -->
-                           <p th:text="${msg.content}"></p>
+            </div>
+            <div class="message-web-list" id="messageContainer">
+                <div th:each="msg : ${messages}">
+                    <div th:class="${msg.senderIdx == login.idx} ? 'message-row right-span' : 'message-row left-span'">
+                        <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
+                            <!-- 메세지 내용 -->
+                            <p th:text="${msg.content}"></p>
 
-                           <!-- 보낸 시간 + 읽음 여부 -->
-                           <div class="message-meta">
-                               <!-- 시간 -->
-                               <small class="send-at" th:text="${#temporals.format(msg.sendAt, 'HH:mm')}"></small>
+                            <!-- 보낸 시간 + 읽음 여부 -->
+                            <div class="message-meta">
+                                <!-- 시간 -->
+                                <small class="send-at" th:text="${#temporals.format(msg.sendAt, 'HH:mm')}"></small>
 
-                               <!-- 읽음 여부 (내가 보낸 메시지일 때만) -->
-                               <small th:if="${msg.senderIdx == login.idx}" class="read-check" th:text="${msg.read} ? '✔️읽음' : ''"></small>
-                           </div>
-                       </div>
-                   </div>
-               </div>
-           </div>
+                                <!-- 읽음 여부 (내가 보낸 메시지일 때만) -->
+                                <small th:if="${msg.senderIdx == login.idx}" class="read-check"
+                                       th:text="${msg.read} ? '✔️읽음' : ''"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!--  메세지를 받는 유저의 정보를 나타냄 -->
-           <div class="message-compose">
-               <div class="compose-input">
-                   <label for="imageUpload" style="cursor: pointer;display: flex">
-                       <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
-                   </label>
-                   <input type="hidden" id="loginIdx" th:value="${login.idx}">
-                   <input type="hidden" id="targetIdx" th:value="${member.idx}">
-                   <input type="file" id="imageUpload" style="display: none;">
-                   <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
-                   <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
-               </div>
-           </div>
-       </div>
+            <div class="message-compose">
+                <div class="compose-input">
+                    <label for="imageUpload" style="cursor: pointer;display: flex">
+                        <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
+                    </label>
+                    <input type="hidden" id="loginIdx" th:value="${login.idx}">
+                    <input type="hidden" id="targetIdx" th:value="${member.idx}">
+                    <input type="file" id="imageUpload" style="display: none;">
+                    <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
+                    <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
+                </div>
+            </div>
+        </div>
 
         <!-- message Detail loginidx == memberidx -->
         <div class="message message-list-my message-add" th:if="${member.idx == login.idx}">
@@ -166,7 +175,6 @@
         </div>
 
 
-
         <!-- 쪽지를 추가하는 팝업 창 -->
         <div class="message-popup hidden"> <!-- 초기에 숨겨둠 -->
             <div class="popup-header">쪽지 보낼 친구 선택</div>
@@ -175,7 +183,7 @@
                 <li class="popup-user-item" th:each="follow : ${followList}"
                     th:data-useridx="${follow.idx}">
                     <img th:src="@{${'/profile-images/' + follow.userImage}}" alt="" width="25px">
-                    <span  th:text="${follow.userName}"></span>
+                    <span th:text="${follow.userName}"></span>
                 </li>
             </ul>
         </div>
@@ -189,7 +197,7 @@
 
     // 쪽지 보내기 프롤스 버튼 눌러서 팝업 등장
     document.querySelectorAll(".message-add").forEach(btn => {
-        btn.addEventListener("click",() => {
+        btn.addEventListener("click", () => {
             const popup = document.querySelector(".message-popup");
             popup.classList.toggle("show");
         });
@@ -337,7 +345,6 @@
         const userIdx = element.dataset.useridx;
         console.log("대화 유저 idx:", userIdx);
     }
-
 
 
     //팔로우 체크 기능

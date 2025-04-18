@@ -28,6 +28,9 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
 
     List<Message> findBySenderIdxAndReceiverIdx(Long senderIdx, Long receiverIdx);
 
+    List<Message> findBySenderIdxAndReceiverIdxAndIsReadFalse(Long senderIdx, Long receiverIdx); // 상대방이 보낸 메세지를 읽 지않았으면
+
+
 
 
 }

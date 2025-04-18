@@ -50,8 +50,9 @@ public class MessageController {
         Set<Long> addedIds = new HashSet<>();
         List<Member> SendUserList = new ArrayList<>();
 
-        // 나에게만 메세지를 보낸
+        // 나에게만 메세지를 보낸 메세지 내용
         Map<Long, Boolean> isAllReadMap = new HashMap<>();
+        Map<Long,Integer> unreadMessageCountMap = new HashMap<>();
 
         List<Message> senderUser = messageRepository.findBySenderIdx(loginUser.getIdx());
         for (Message message : senderUser) {
@@ -93,6 +94,13 @@ public class MessageController {
             isAllReadMap.put(message.getSenderIdx(), allRead);
 
             RecevierListMap.put(message.getSenderIdx(), ReceiverMessage);
+
+            // 상대가 나에게 보낸 메시지 중 안 읽은 것만 필터링
+            List<Message> unreadMessages = messageRepository.findBySenderIdxAndReceiverIdxAndIsReadFalse(message.getSenderIdx(), loginUser.getIdx());
+
+            if (!unreadMessages.isEmpty()) {
+                unreadMessageCountMap.put(message.getSenderIdx(), unreadMessages.size());
+            }
         }
 
 
@@ -123,7 +131,9 @@ public class MessageController {
         model.addAttribute("sendUserList", SendUserList); // 내가 메세지를 보낸 유저의 리스트 가져오기
         model.addAttribute("recentlyMessage", RecentlyMessage); // 메세지를 나눴던 제이 최근 유저
         model.addAttribute("followList", followListMap); // 내가 팔로우 하고 있는 유저
-        model.addAttribute("isAllReadMap", isAllReadMap);
+        model.addAttribute("isAllReadMap", isAllReadMap); // 현재 메세지를 읽었는 체크 
+        model.addAttribute("unreadMessageCount", unreadMessageCountMap); // 메세지를 읽지 않았으면 경고 표시및 갯수
+
 
         return "message";
     }
