@@ -334,7 +334,7 @@
     // 이미지 슬라이 버튼 클릭시 a 태그로 가는 이동 막기
     document.querySelectorAll('.board-slide-left, .board-slide-right')
         .forEach(btn => {
-            btn.addEventListener('click', function(event) {
+            btn.addEventListener('click', function (event) {
                 event.preventDefault();      // a 태그 이동 막기
                 event.stopPropagation();    // 부모 요소로 이벤트 전파도 막기
 
@@ -417,49 +417,49 @@
     });
 
     // 찜하기
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const btns = document.querySelectorAll(".boardLike-btn");
 
         btns.forEach(btn => {
             const boardIdx = btn.dataset.boardIdx;
             const likeCountSpan = btn.parentElement.querySelector(".board-like-count");
 
-            fetch(`/board/like-status/${boardIdx}`,{
+            fetch(`/board/like-status/${boardIdx}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type" : "application/json"
+                    "Content-Type": "application/json"
                 }
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.status === "liked"){
+                    if (data.status === "liked") {
                         btn.textContent = "❤️";
                         likeCountSpan.textContent = data.likeCount;
-                    } else if(data.status === "not_liked"){
+                    } else if (data.status === "not_liked") {
                         btn.textContent = "🖤";
                         likeCountSpan.textContent = data.likeCount;
                     }
                 })
                 .catch(error => console.error("Error :", error));
 
-            btn.addEventListener("click",function (){
+            btn.addEventListener("click", function () {
                 fetch(`/board/like/${boardIdx}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     }
                 })
                     .then(response => {
-                        if(response.status === 401){
+                        if (response.status === 401) {
                             alert("로그인을 해주시기 바랍니다");
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if(data.status === "added"){
+                        if (data.status === "added") {
                             btn.textContent = "❤️";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                        } else if(data.status === "removed"){
+                        } else if (data.status === "removed") {
                             btn.textContent = "🖤";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
                         }

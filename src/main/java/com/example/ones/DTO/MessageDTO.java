@@ -19,5 +19,5 @@ public class MessageDTO {
     private String content;
     private String imagesContent;
     private LocalDateTime sendAt;
-
+    private boolean isRead;
 }

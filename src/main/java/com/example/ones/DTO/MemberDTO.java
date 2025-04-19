@@ -16,6 +16,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class MemberDTO {
 
+    private Long idx;
+
     @NotEmpty(message = "아이디를 입력해주세요")
     private String userId;
 

@@ -42,14 +42,6 @@ body{
     padding: 0;
     margin: 0;
 }
-.message-list-input {
-    width: 100%;
-    padding: 8px 0 ;
-    margin-bottom: 10px;
-    text-indent: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-}
 .message-add {
     cursor: pointer;
 }
@@ -158,7 +150,29 @@ body{
 .message-compose {
     width: 100%;
 }
+.message-search {
+    display: flex;
+    justify-content: center; /* 전체를 수평 중앙 정렬 */
+    align-items: center;     /* 수직 중앙 정렬 */
+    gap: 8px;                /* input과 이미지 사이 간격 */
+    margin: 20px 0;          /* 위아래 여백 (선택사항) */
+    position: relative;
+}
 
+.message-list-input {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    width: 100%;
+    text-indent: 10px;
+}
+
+.message-btn {
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+}
 .message-items {
     padding: 5px 0;
     border-top: 1px solid #ccc;
@@ -301,7 +315,14 @@ body{
     color:black;
 
 }
-
+.unread-count {
+    color:white;
+    background: #333;
+    padding: 1px 4px;
+    font-size: 12px;
+    text-align: center;
+    border-radius: 50%;
+}
 .sendMessage {
     background: #333;
     border-radius: 8px;
@@ -318,6 +339,7 @@ body{
 /* ---------------------------- follower 리스트 팝업 css 시작 -----------------------------*/
 /* 팝업 기본 스타일 */
 .message-popup {
+    margin-top: 5px;
     position: absolute;
     top: 60px; /* plus 버튼 기준 위치 조정 */
     right: 20px;
@@ -367,4 +389,11 @@ body{
 .popup-user-item:hover {
     background-color: #f5f5f5;
 }
+.popup-close{
+    position: absolute;
+    top:5px;
+    right: 10px;
+    cursor: pointer;
+}
+
 /* ---------------------------- follower 리스트 팝업 css 끝 -----------------------------*/
