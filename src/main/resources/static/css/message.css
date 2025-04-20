@@ -133,11 +133,13 @@ body{
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    margin-bottom: 10px;
 }
 
 .user-details div {
     margin-bottom: 5px;
+}
+.user-details a{
+    text-decoration: none;
 }
 .message-header,
 .message-compose {
@@ -332,6 +334,23 @@ body{
 .sendMessage.deactive {
     cursor: none;
     background: #dddddd;
+}
+.user-status{
+    position: relative;
+}
+.offline-indicator{
+    color:black;
+    font-size: 22px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+.online-indicator {
+    color: green;
+    font-size: 22px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
 }
 /* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
 

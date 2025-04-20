@@ -20,7 +20,11 @@
                 <ul>
                     <li sec:authorize="isAnonymous()" ><a href="/login">로그인</a></li>
                     <li sec:authorize="isAuthenticated()" ><a href="/mypage"><span class="layout-username" th:text="${UserName}"></span></a></li>
-                    <li sec:authorize="isAuthenticated()" ><a href="/logout">로그아웃</a></li>
+                    <li sec:authorize="isAuthenticated()" >
+                        <form action="/logout" method="post">
+                            <button type="submit">로그아웃</button>
+                        </form>
+                    </li>
                     <li sec:authorize="isAnonymous()" ><a href="/sign">회원가입</a></li>
                 </ul>
             </nav>

@@ -1,6 +1,9 @@
 package com.example.ones.Security;
 
 
+import com.example.ones.CustomHander.CustomLogoutSuccessHandler;
+import com.example.ones.CustomHander.GlobalModelAttributeAdvice;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +17,10 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class PageSecurity {
+
+    private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -28,15 +34,17 @@ public class PageSecurity {
                         csrfConfig.disable()
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/board_list","/sign", "/**").permitAll()
+                        .requestMatchers("/login", "/board_list", "/sign", "/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin((formLogin) -> formLogin
                         .loginPage("/login")
                         .defaultSuccessUrl("/"))
-                .logout((logout) -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true))
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
+                        .logoutSuccessHandler(logoutSuccessHandler)
+                        .invalidateHttpSession(true)
+                )
         ;
         return http.build();
     }

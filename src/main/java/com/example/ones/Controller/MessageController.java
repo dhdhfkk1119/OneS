@@ -157,7 +157,7 @@ public class MessageController {
                     Member member = memberRepository.findByIdx(memberIdx)
                             .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-                    return new MessageSearchDTO(memberIdx ,member.getUserId(), member.getUserName(), member.getUserImage(), messageContent);
+                    return new MessageSearchDTO(memberIdx ,member.getUserId(), member.getUserName(), member.getUserImage(), messageContent , member.getUserStatus());
                 })
                 .collect(Collectors.toList());
 

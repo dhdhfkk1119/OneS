@@ -13,17 +13,18 @@
         <div class="navbar-inner-detail">
             <a href="javascript:history.back()">
                 <img th:src="@{'/local-images/back.png'}" alt="" width="20px">
-                <span class="user-name"th:text="${writers[boards.boardIdx].userName + '님의'}"></span>
+                <span class="user-name" th:text="${writers[boards.boardIdx].userName + '님의'}"></span>
                 <span>게시물</span>
             </a>
         </div>
     </div>
 
     <!-- 게시글 목록 리스트 -->
-    <div class="post" >
+    <div class="post">
         <div class="post-header">
             <a th:href="@{${'/profile/' + writers[boards.boardIdx].idx}}">
-                <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}" alt="프로필">
+                <img class="profile-img" th:src="@{${'/profile-images/' + writers[boards.boardIdx].userImage}}"
+                     alt="프로필">
             </a>
             <div class="user-info">
                 <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
@@ -51,7 +52,7 @@
             <span>👀 <span th:text="${boards.boardView}"></span></span>
         </div>
         <!--   댓글 창 팝업   -->
-        <div class="comment-section"  th:attr="data-board-id=${boards.boardIdx}">
+        <div class="comment-section" th:attr="data-board-id=${boards.boardIdx}">
             <div class="comment-input" th:if="${#authorization.expression('isAuthenticated()')}">
                 <img class="profile-img" th:src="@{${'/profile-images/' + member.userImage}}" alt="프로필">
                 <div class="user-info">
@@ -67,15 +68,18 @@
 
                 <!-- 이미지 미리보기 슬라이드 -->
                 <div class="image-slider comment-slider">
-                    <button type="button" class="slide-btn left comment-left" >&#10094;</button>
+                    <button type="button" class="slide-btn left comment-left">&#10094;</button>
                     <div class="preview-container comment-container" id="coment-container"></div>
                     <button type="button" class="slide-btn right comment-right">&#10095;</button>
                 </div>
 
                 <div class="comment-btn">
                     <input type="hidden" name="boardidx" th:value="${boards.boardIdx}">
-                    <input type="file" class="upload-btn commentupload-btn"  name="commentfiles" onchange="preView(this);" multiple accept="image/*" />
-                    <button class="file-btn" th:attr="data-board-id=${boards.boardIdx}" onclick="CommentImgUpload(event)">이미지 선택</button>
+                    <input type="file" class="upload-btn commentupload-btn" name="commentfiles"
+                           onchange="preView(this);" multiple accept="image/*"/>
+                    <button class="file-btn" th:attr="data-board-id=${boards.boardIdx}"
+                            onclick="CommentImgUpload(event)">이미지 선택
+                    </button>
                     <button class="comment-submit">작성</button>
                 </div>
             </form>
@@ -83,7 +87,8 @@
             <div th:each="comment : ${commentList}" class="comment-bar">
                 <div>
                     <div class="post-header">
-                        <img class="profile-img" th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}" alt="프로필">
+                        <img class="profile-img"
+                             th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}" alt="프로필">
                         <div class="user-info">
                             <span class="user-name" th:text="${commentwirtes[comment.commentIdx].userName}"></span>
                             <span class="user-id" th:text="${'@' +commentwirtes[comment.commentIdx].userId}"></span>
@@ -96,7 +101,8 @@
                             <div class="board-img-list-inner comment-img-list-inner">
                                 <button class="board-slide-left">&#10094;</button>
                                 <div class="comment-img-list-inner-container">
-                                    <div class="img-list-inner" th:each="imgUrl : ${commentImages.get(comment.commentIdx)}">
+                                    <div class="img-list-inner"
+                                         th:each="imgUrl : ${commentImages.get(comment.commentIdx)}">
                                         <img th:src="@{${'/comment-images/' + imgUrl}}" alt="게시물 이미지">
                                     </div>
                                 </div>
@@ -129,7 +135,7 @@
 
         commentToggles.forEach(toggle => {
             toggle.addEventListener("click", function () {
-                if(!isLoggedIn){
+                if (!isLoggedIn) {
                     alert("로그인 해주세요");
                     window.location.href = "/login";  // 로그인 페이지로 이동
                     return;
@@ -172,7 +178,7 @@
     });
 
     // 게실물 이미지 버튼
-    function ImgUpload(event){
+    function ImgUpload(event) {
         event.preventDefault(); // 기본 이벤트(폼 제출) 방지
         document.querySelector(".upload-btn").click();
     }
@@ -245,9 +251,9 @@
                 imgWrapper.appendChild(img);
                 imgWrapper.appendChild(closeBtn);
                 previewContainer.appendChild(imgWrapper);
-                if(isComment){
+                if (isComment) {
                     initComentSlider();
-                }else{
+                } else {
                     initBoardSlider();
                 }
             };
@@ -521,47 +527,47 @@
     });
 
     // 찜하기 기능
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const btns = document.querySelector(".boardLike-btn");
         const boardIdx = btns.dataset.boardIdx;
         const likeCountSpan = btns.parentElement.querySelector(".board-like-count");
 
-        fetch(`/board/like-status/${boardIdx}`,{
+        fetch(`/board/like-status/${boardIdx}`, {
             method: "GET",
             headers: {
-                "Content-Type" : "application/json"
+                "Content-Type": "application/json"
             }
         })
             .then(response => response.json())
             .then(data => {
-                if(data.status === "liked"){
+                if (data.status === "liked") {
                     btns.textContent = "❤️";
                     likeCountSpan.textContent = data.likeCount;
-                } else if(data.status === "not_liked"){
+                } else if (data.status === "not_liked") {
                     btns.textContent = "🖤";
                     likeCountSpan.textContent = data.likeCount;
                 }
             })
             .catch(error => console.error("Error :", error));
 
-        btns.addEventListener("click",function (){
+        btns.addEventListener("click", function () {
             fetch(`/board/like/${boardIdx}`, {
                 method: "POST",
                 headers: {
-                    "Content-Type":"application/json"
+                    "Content-Type": "application/json"
                 }
             })
                 .then(response => {
-                    if(response.status === 401){
+                    if (response.status === 401) {
                         alert("로그인을 해주시기 바랍니다");
                     }
                     return response.json();
                 })
                 .then(data => {
-                    if(data.status === "added"){
+                    if (data.status === "added") {
                         btns.textContent = "❤️";
                         likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                    } else if(data.status === "removed"){
+                    } else if (data.status === "removed") {
                         btns.textContent = "🖤";
                         likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
                     }
@@ -571,49 +577,49 @@
     });
 
     // 댓글 찜하기 기능
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const btns = document.querySelectorAll(".comment-like-btn");
 
         btns.forEach(btn => {
             const commentIdx = btn.dataset.commentIdx;
             const likeCountSpan = btn.parentElement.querySelector(".comment-like-count");
 
-            fetch(`/comment_like/status/${commentIdx}`,{
+            fetch(`/comment_like/status/${commentIdx}`, {
                 method: "GET",
                 headers: {
-                    "Content-Type" : "application/json"
+                    "Content-Type": "application/json"
                 }
             })
                 .then(response => response.json())
                 .then(data => {
-                    if(data.status === "liked"){
+                    if (data.status === "liked") {
                         btn.textContent = "❤️";
                         likeCountSpan.textContent = data.likeCount;
-                    } else if(data.status === "not_liked"){
+                    } else if (data.status === "not_liked") {
                         btn.textContent = "🖤";
                         likeCountSpan.textContent = data.likeCount;
                     }
                 })
                 .catch(error => console.error("Error :", error));
 
-            btn.addEventListener("click",function (){
+            btn.addEventListener("click", function () {
                 fetch(`/comment_like/${commentIdx}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type":"application/json"
+                        "Content-Type": "application/json"
                     }
                 })
                     .then(response => {
-                        if(response.status === 401){
+                        if (response.status === 401) {
                             alert("로그인을 해주시기 바랍니다");
                         }
                         return response.json();
                     })
                     .then(data => {
-                        if(data.status === "added"){
+                        if (data.status === "added") {
                             btn.textContent = "❤️";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) + 1;
-                        } else if(data.status === "removed"){
+                        } else if (data.status === "removed") {
                             btn.textContent = "🖤";
                             likeCountSpan.textContent = Number(likeCountSpan.textContent) - 1;
                         }

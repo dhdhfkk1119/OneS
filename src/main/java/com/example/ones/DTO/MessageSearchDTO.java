@@ -16,4 +16,5 @@ public class MessageSearchDTO {
     private String userName;
     private String userImage;
     private String messageContent;
+    private String userStatus; // ✅ 로그인 상태 추가
 }

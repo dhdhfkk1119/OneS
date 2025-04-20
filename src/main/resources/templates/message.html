@@ -111,11 +111,14 @@
         <!-- 3. Message Detail -->
         <div class="message" th:if="${member.idx != login.idx}">
             <div class="user-details">
-                <a th:href="@{${'/profile/' + member.idx}}">
+                <a class="user-status" th:href="@{${'/profile/' + member.idx}}">
                     <img th:src="@{${'/profile-images/' + member.userImage}}" alt="유저 이미지" class="user-details-img">
+                    <span th:class="${member.userStatus == 'connect'} ? 'online-indicator' : 'offline-indicator'">
+                        ●
+                    </span>
                 </a>
-                <div th:text="${member.userName}"></div>
-                <div th:text="${member.userId}"></div>
+                <div th:text="${member.userName}" class="userName" style="margin-top: 10px"></div>
+                <div th:text="${'@ '+member.userId}" class="userId"></div>
                 <div th:text="${member.introduce}"></div>
                 <div class="user-calendar">
                     <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
@@ -269,18 +272,18 @@
             div.setAttribute("onclick", "UserChange(this)");   // ✅ 클릭 이벤트 추가
 
             div.innerHTML = `
-            <img src="/profile-images/${user.userImage || 'basic.png'}" alt="" width="50px" style="border-radius: 50%">
-            <div>
+                <img src="/profile-images/${user.userImage || 'basic.png'}" alt="" width="50px" style="border-radius: 50%">
                 <div>
-                    <span class="userName">${user.userName}</span>
-                    <span class="userId">@${user.userId}</span>
-                    <span class="unread-badge"><span class="unread-count">0</span></span>
+                    <div>
+                        <span class="userName">${user.userName}</span>
+                        <span class="userId">@${user.userId}</span>
+                        <span class="unread-badge"><span class="unread-count">0</span></span>
+                    </div>
+                    <div>
+                        <span class="recently-message">${user.messageContent}</span>
+                    </div>
                 </div>
-                <div>
-                    <span class="recently-message">${user.messageContent}</span>
-                </div>
-            </div>
-        `;
+            `;
             list.appendChild(div);
         });
     }
