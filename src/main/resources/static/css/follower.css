@@ -7,7 +7,7 @@
 }
 
 .search-input {
-    width: 50%;
+    width: 45%;
 !important;
 }
 
@@ -21,15 +21,31 @@
 }
 
 .follow-btn-list {
+    display: flex;
     position: absolute;
-    right: 20px;
-    transform: translateY(-50%);
+    right: 10px;
+    transform: translateY(10px);
+
+}
+.edit-message-a{
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+.edit-message-a:hover{
+    background-color: #f0f0f0; /* 원하는 hover 배경색 */
+    cursor: pointer;
 }
 .follow-btn {
     padding: 8px 12px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
+}
+.follow-btn:hover{
+    background-color: #f0f0f0; /* 원하는 hover 배경색 */
 }
 .follow-btn.active {
     background-color: #333;
@@ -45,3 +61,31 @@
 .follower-list-inner{
     cursor: pointer;
 }
+.user-details-img {
+    border-radius: 50%;
+}
+.user-item-info {
+    display: flex;
+}
+.edit-profile{
+    display: flex;
+}
+
+/*  로그인 한 유무 체크 css 시작 */
+.offline-indicator{
+    color: #b6b6b6;
+    font-size: 22px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 999;
+}
+.online-indicator {
+    color: green;
+    font-size: 22px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 999;
+}
+/*  로그인 한 유무 체크 css 긑 */

@@ -100,10 +100,11 @@
                     <div class="user-list-inner follower-list-inner" th:each="m : ${follower}">
                         <a th:href="@{${'/profile/' + m.idx}}">
                             <div class="user-item">
-                                <div>
-                                    <img th:src="@{${'/profile-images/' + m.getUserImage()}}" alt="" width="56">
+                                <div style="position: relative;">
+                                    <img th:src="@{${'/profile-images/' + m.getUserImage()}}" alt="" width="56" class="user-details-img">
+                                    <span th:class="${m.userStatus == 'connect'} ? 'online-indicator' : 'offline-indicator'">●</span>
                                 </div>
-                                <div>
+                                <div class="user-item-info">
                                     <div>
                                         <span class="user-name" th:text="${m.userName}"></span>
                                         <span class="user-id" th:text="${'@' +m.userId}"></span>
@@ -111,9 +112,9 @@
                                     <div>
                                         <span class="user-content" th:text="${m.introduce}"></span>
                                     </div>
-                                    <div class="edit-profile">
+                                    <div class="edit-profile follow-btn-list">
                                         <div th:if="${member == null or member.idx != m.idx}" class="edit-nosession">
-                                            <a th:href="@{${'/message/' + member.idx}}" class="edit-message"
+                                            <a th:href="@{${'/message/' + member.idx}}" class="edit-message-a"
                                                onclick="message(event)"
                                                th:data-idx="${member.idx}">
                                                 <img th:src="@{'/local-images/conversation.png'}" alt="" width="24px">
@@ -135,10 +136,11 @@
                     <div class="user-list-inner follower-list-inner" th:each="m : ${following}">
                         <a th:href="@{${'/profile/' + m.idx}}">
                             <div class="user-item">
-                                <div>
-                                    <img th:src="@{${'/profile-images/' + m.getUserImage()}}" alt="" width="56">
+                                <div style="position: relative">
+                                    <img th:src="@{${'/profile-images/' + m.getUserImage()}}" alt="" width="56" class="user-details-img">
+                                    <span th:class="${m.userStatus == 'connect'} ? 'online-indicator' : 'offline-indicator'">●</span>
                                 </div>
-                                <div>
+                                <div class="user-item-info">
                                     <div>
                                         <span class="user-name" th:text="${m.userName}"></span>
                                         <span class="user-id" th:text="${'@' +m.userId}"></span>
@@ -146,9 +148,9 @@
                                     <div>
                                         <span class="user-content" th:text="${m.introduce}"></span>
                                     </div>
-                                    <div class="follow-btn-list">
+                                    <div class="edit-message follow-btn-list">
                                         <div th:if="${member == null or member.idx != m.idx}" class="edit-nosession">
-                                            <a th:href="@{${'/message/' + m.idx}}" class="edit-message"
+                                            <a th:href="@{${'/message/' + m.idx}}" class="edit-message-a"
                                                onclick="message(event)"
                                                th:data-idx="${member.idx}">
                                                 <img th:src="@{'/local-images/conversation.png'}" alt="" width="24px">

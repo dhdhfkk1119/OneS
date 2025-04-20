@@ -339,11 +339,12 @@ body{
     position: relative;
 }
 .offline-indicator{
-    color:black;
+    color:#b6b6b6;
     font-size: 22px;
     position: absolute;
     bottom: 0;
     right: 0;
+    z-index: 999;
 }
 .online-indicator {
     color: green;
@@ -351,6 +352,7 @@ body{
     position: absolute;
     bottom: 0;
     right: 0;
+    z-index: 999;
 }
 /* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
 
