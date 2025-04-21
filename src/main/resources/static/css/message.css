@@ -354,6 +354,9 @@ body{
     right: 0;
     z-index: 999;
 }
+.message-preview {
+    position: relative;
+}
 /* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
 
 

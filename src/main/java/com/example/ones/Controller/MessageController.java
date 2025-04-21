@@ -10,12 +10,15 @@ import com.example.ones.Repository.MemberRepository;
 import com.example.ones.Repository.MessageRepository;
 import com.example.ones.Service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -174,13 +177,16 @@ public class MessageController {
         return resultDTOs;
     }
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     // 메세지 에서 이미지만 따로 답는 API
     @PostMapping("/upload/message-image")
     public ResponseEntity<List<String>> uploadMessageImage(@RequestParam("image") MultipartFile[] files){
 
         List<String> fileNames = new ArrayList<>();
         try {
-            String uploadDir = "C:\\Project\\src\\main\\resources\\static\\message-images";
+
 
             for (MultipartFile file : files) {
                 String originalFileName = file.getOriginalFilename();

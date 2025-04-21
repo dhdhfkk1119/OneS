@@ -155,6 +155,12 @@
                 </div>
             </div>
 
+            <!--  메세지 이미지 프리뷰  -->
+            <div id="message-preview-list" style="position: relative">
+                <div id="message-preview" class="message-preview" style="margin-top: 10px; display: flex; gap: 5px;">
+                </div>
+            </div>
+
             <!--  메세지를 받는 유저의 정보를 나타냄 -->
             <div class="message-compose">
                 <div class="compose-input">
@@ -163,7 +169,7 @@
                     </label>
                     <input type="hidden" id="loginIdx" th:value="${login.idx}">
                     <input type="hidden" id="targetIdx" th:value="${member.idx}">
-                    <input type="file" id="imageUpload" style="display: none;"  multiple/>
+                    <input type="file" id="imageUpload" style="display: none;" multiple/>
                     <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
                     <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
                 </div>
@@ -256,6 +262,65 @@
         }
     });
 
+    // 메세지 이미지 프리뷰
+    const fileInput = document.getElementById("imageUpload");
+    const previewContainer = document.getElementById("message-preview");
+    const previewList = document.querySelectorAll(".message-preview");
+    const closeBtn = document.getElementById("preview-close");
+
+    fileInput.addEventListener('change', () => {
+        previewContainer.innerHTML = ''; // 초기화
+
+        const files = fileInput.files;
+        Array.from(files).forEach((file, index) => {
+            const imageSrc = URL.createObjectURL(file);
+
+            // 컨테이너 div 생성
+            const imageWrapper = document.createElement("div");
+            imageWrapper.style.position = "relative";
+            imageWrapper.style.display = "inline-block";
+
+            // 이미지 태그
+            const img = document.createElement("img");
+            img.src = imageSrc;
+            img.className = "message-preview";
+            img.style.width = "100px";
+            img.style.height = "100px";
+            img.style.objectFit = "cover";
+            img.style.borderRadius = "8px";
+
+            // X 버튼 생성
+            const closeBtn = document.createElement("span");
+            closeBtn.innerText = "×";
+            closeBtn.style.position = "absolute";
+            closeBtn.style.top = "0px";
+            closeBtn.style.right = "0px";
+            closeBtn.style.background = "rgba(0,0,0,0.5)";
+            closeBtn.style.color = "white";
+            closeBtn.style.borderRadius = "50%";
+            closeBtn.style.cursor = "pointer";
+            closeBtn.style.fontSize = "16px";
+            closeBtn.style.width = "20px";
+            closeBtn.style.height = "20px";
+            closeBtn.style.display = "flex";
+            closeBtn.style.alignItems = "center";
+            closeBtn.style.justifyContent = "center";
+
+            // 클릭 시 삭제
+            closeBtn.addEventListener("click", () => {
+                imageWrapper.remove();
+                // 실제 업로드는 서버로 따로 처리하므로
+                // 필요 시 업로드 목록 관리 로직도 여기에 추가 가능
+            });
+
+            imageWrapper.appendChild(img);
+            imageWrapper.appendChild(closeBtn);
+            previewContainer.appendChild(imageWrapper);
+        });
+    });
+
+
+    // 받아온 메세지 및 이미지를 실시간으로 DB 에서 보여주기
     function updateUserList(data) {
         const list = document.querySelector(".message-items");
 
@@ -324,24 +389,24 @@
             return;
         }
 
-        if(files.length > 0) {
+        if (files.length > 0) {
             const formData = new FormData();
-            for(const file of files){
-                formData.append("image",file) // 서버에서 @RequestParam("image")로 받음
+            for (const file of files) {
+                formData.append("image", file) // 서버에서 @RequestParam("image")로 받음
             }
             try {
-                const response = await fetch("/upload/message-image",{
-                   method : "POST",
-                   body : formData
+                const response = await fetch("/upload/message-image", {
+                    method: "POST",
+                    body: formData
                 });
-                if(response.ok){
+                if (response.ok) {
                     imageUrls = await response.json();
                 } else {
                     console.log("이미지 업로드 실패");
                     return;
                 }
             } catch (error) {
-                console.error("이미지 업로드 중 오류" , error);
+                console.error("이미지 업로드 중 오류", error);
                 return;
             }
         }
@@ -351,7 +416,7 @@
             receiverIdx: receiverIdx,
             content: message,
             sendAt: sendAt,
-            contentImage : imageUrls,
+            contentImage: imageUrls,
             imagesContent: imageUrls.join(",")
         }));
 
