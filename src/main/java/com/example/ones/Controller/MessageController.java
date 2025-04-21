@@ -10,10 +10,16 @@ import com.example.ones.Repository.MemberRepository;
 import com.example.ones.Repository.MessageRepository;
 import com.example.ones.Service.MessageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -157,7 +163,7 @@ public class MessageController {
                     Member member = memberRepository.findByIdx(memberIdx)
                             .orElseThrow(() -> new RuntimeException("유저 없음"));
 
-                    return new MessageSearchDTO(memberIdx ,member.getUserId(), member.getUserName(), member.getUserImage(), messageContent , member.getUserStatus());
+                    return new MessageSearchDTO(memberIdx, member.getUserId(), member.getUserName(), member.getUserImage(), messageContent, member.getUserStatus());
                 })
                 .collect(Collectors.toList());
 
@@ -166,6 +172,30 @@ public class MessageController {
 
 
         return resultDTOs;
+    }
+
+    // 메세지 에서 이미지만 따로 답는 API
+    @PostMapping("/upload/message-image")
+    public ResponseEntity<List<String>> uploadMessageImage(@RequestParam("image") MultipartFile[] files){
+
+        List<String> fileNames = new ArrayList<>();
+        try {
+            String uploadDir = "C:\\Project\\src\\main\\resources\\static\\message-images";
+
+            for (MultipartFile file : files) {
+                String originalFileName = file.getOriginalFilename();
+                String fileName = UUID.randomUUID().toString() + "_" + originalFileName;
+                Path filePath = Paths.get(uploadDir, fileName);
+
+                file.transferTo(filePath.toFile());
+                fileNames.add(fileName);
+
+            }
+            return ResponseEntity.ok(fileNames);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 

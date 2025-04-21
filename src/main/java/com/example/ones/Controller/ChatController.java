@@ -19,6 +19,16 @@ public class ChatController {
     @MessageMapping("/chat/send")
     @SendTo("/topic/messages")
     public MessageDTO sendMessage(MessageDTO messageDTO) {
+
+        System.out.println( "이미지 내용 ChatController " +messageDTO.getImagesContent());
+
+        if (messageDTO.getImagesContent() != null && !messageDTO.getImagesContent().isBlank()) {
+            String[] imageList = messageDTO.getImagesContent().split(",");
+            for (String url : imageList) {
+                System.out.println("📷 이미지 URL: " + url);
+            }
+        }
+
         messageService.saveMessage(messageDTO);
 
         return messageDTO;

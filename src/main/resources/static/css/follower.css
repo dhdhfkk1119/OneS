@@ -30,7 +30,7 @@
 .edit-message-a{
     align-items: center;
     justify-content: center;
-    padding: 8px;
+    padding: 5px 6px;
     border-radius: 50%;
     transition: background-color 0.3s ease;
 }
