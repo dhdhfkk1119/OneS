@@ -140,10 +140,13 @@
                         <div th:class="${msg.senderIdx == login.idx} ? 'send-message' : 'receive-message'">
                             <!-- 메세지 내용 -->
                             <p th:text="${msg.content}"></p>
-                            <img th:if="${msg.imagesContent != null and !#strings.isEmpty(msg.imagesContent)}"
-                                 th:each="imgUrl : ${ImageList[msg.messageIdx]}"
-                                 th:src="@{${'/message-images/' + imgUrl}}"
-                                 alt="" width="200px">
+                            <div th:if="${msg.imagesContent != null and !#strings.isEmpty(msg.imagesContent)}"
+                                 th:with="imgList=${ImageList[msg.messageIdx]}, imgSize=${#lists.size(ImageList[msg.messageIdx])}"
+                                 class="image-wrapper" th:classappend="' count-' + ${imgSize}">
+                                <img th:each="imgUrl : ${imgList}"
+                                     th:src="@{'/message-images/' + ${imgUrl}}"
+                                     class="message-image">
+                            </div>
                             <!-- 보낸 시간 + 읽음 여부 -->
                             <div class="message-meta">
                                 <!-- 시간 -->
@@ -298,6 +301,8 @@
     // 엔터로 메시지 전송
     msgInput.addEventListener("keyup", function (event) {
         if (event.key === "Enter") {
+            msgInput.value = '';
+            msgInput.innerHTML = '';
             sendMessage();
         }
     });
@@ -305,6 +310,7 @@
     // 메세지 이미지 프리뷰
     const previewContainer = document.getElementById("message-preview");
     const ImageInput = document.getElementById("imageUpload");
+
 
     function handleImageUpload(event) {
         const newFiles = Array.from(event.target.files);
@@ -456,6 +462,8 @@
         }));
 
         resetInput();
+        msgInput.value = '';
+        msgInput.innerHTML = '';
     }
 
 
