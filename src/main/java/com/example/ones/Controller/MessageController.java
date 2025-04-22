@@ -49,6 +49,16 @@ public class MessageController {
 
         List<Message> messageList = messageRepository.findMessagesBetweenUsers(loginUser.getIdx(), targetUser.getIdx());
 
+        Map<Long,List<String>> messageImageMap = new HashMap<>();
+
+        for (Message message : messageList) {
+            List<String> ImagesList = new ArrayList<>();
+            if(message.getImagesContent() != null && !message.getImagesContent().isEmpty()) {
+                ImagesList = Arrays.asList(message.getImagesContent().split(","));
+            }
+            messageImageMap.put(message.getMessageIdx(), ImagesList);
+        }
+
 
         // 내가 팔로우 하고있는 나를 팔로우 하고 있는 유저들의 리스트
         Set<Long> followIds = new HashSet<>();
@@ -132,6 +142,7 @@ public class MessageController {
         model.addAttribute("login", loginUser); // 현재 로그인 한 유저의 정보
         model.addAttribute("member", targetUser); // 메세지를 받는 상대 유저의 정보
         model.addAttribute("messages", messageList); // 메세지 리스트 가져오기
+        model.addAttribute("ImageList",messageImageMap); // 메세지 이미지 리스트
         model.addAttribute("sendUserList", SendUserList); // 내가 메세지를 보낸 유저의 리스트 가져오기
         model.addAttribute("recentlyMessage", RecentlyMessage); // 메세지를 나눴던 제이 최근 유저
         model.addAttribute("followList", followListMap); // 내가 팔로우 하고 있는 유저
@@ -153,11 +164,6 @@ public class MessageController {
         // 메시지 조인 쿼리로 검색된 Member + message 내용까지 가져오기
         List<Object[]> results = messageRepository.findRecentMessagesWithKeyword(loginUser.getIdx(), keyword);
 
-        System.out.println("조회된 원시 결과:");
-        for (Object[] row : results) {
-            System.out.println("  memberIdx: " + row[0] + ", messageContent: " + row[1]);
-        }
-
         List<MessageSearchDTO> resultDTOs = results.stream()
                 .map(obj -> {
                     Long memberIdx = (Long) obj[0];
@@ -169,10 +175,6 @@ public class MessageController {
                     return new MessageSearchDTO(memberIdx, member.getUserId(), member.getUserName(), member.getUserImage(), messageContent, member.getUserStatus());
                 })
                 .collect(Collectors.toList());
-
-        System.out.println("최종 응답 DTO 목록:");
-        resultDTOs.forEach(System.out::println); // MessageSearchDTO에 toString() 있으면 보기 좋음
-
 
         return resultDTOs;
     }
@@ -186,7 +188,6 @@ public class MessageController {
 
         List<String> fileNames = new ArrayList<>();
         try {
-
 
             for (MultipartFile file : files) {
                 String originalFileName = file.getOriginalFilename();

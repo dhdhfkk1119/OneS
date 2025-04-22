@@ -141,7 +141,8 @@
                             <!-- 메세지 내용 -->
                             <p th:text="${msg.content}"></p>
                             <img th:if="${msg.imagesContent != null and !#strings.isEmpty(msg.imagesContent)}"
-                                 th:src="@{'/message-images/' + ${msg.imagesContent}}"
+                                 th:each="imgUrl : ${ImageList[msg.messageIdx]}"
+                                 th:src="@{${'/message-images/' + imgUrl}}"
                                  alt="" width="200px">
                             <!-- 보낸 시간 + 읽음 여부 -->
                             <div class="message-meta">
@@ -158,7 +159,7 @@
             </div>
 
             <!--  메세지 이미지 프리뷰  -->
-            <div id="message-preview-list" style="position: relative">
+            <div id="message-preview-list" style="position: relative; display: none">
                 <div id="message-preview" class="message-preview" style="margin-top: 10px; display: flex; gap: 5px;">
                 </div>
             </div>
@@ -166,12 +167,12 @@
             <!--  메세지를 받는 유저의 정보를 나타냄 -->
             <div class="message-compose">
                 <div class="compose-input">
-                    <label for="imageUpload" style="cursor: pointer;display: flex">
+                    <label for="imageUpload" class="forImageUpload" id="forImageUpload" style="cursor: pointer;display: flex">
                         <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
                     </label>
                     <input type="hidden" id="loginIdx" th:value="${login.idx}">
                     <input type="hidden" id="targetIdx" th:value="${member.idx}">
-                    <input type="file" id="imageUpload" onchange="handleImageUpload(event)" multiple/>
+                    <input type="file" id="imageUpload" style="display: none" onchange="handleImageUpload(event)" multiple/>
                     <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
                     <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
                 </div>
@@ -267,6 +268,7 @@
     // 메세지가 입력 될시에 활성화
     const msgInput = document.getElementById("msgInput");
     const msgBtn = document.getElementById("sendMessage");
+    const ImageContainer = document.getElementById("message-preview-list");
     let postImages = [];
 
     // 입력값이 있을 때 버튼 활성화
@@ -281,11 +283,13 @@
     });
 
     // 이미지 가 있을 경우
-    function imageUpdateDispaly(){
-        if(postImages.length < 1){
+    function imageUpdateDispaly() {
+        if (postImages.length < 1) {
+            ImageContainer.style.display = 'none';
             msgBtn.classList.add("deactive");
             msgBtn.disabled = true;
-        }else {
+        } else {
+            ImageContainer.style.display = 'block';
             msgBtn.classList.remove("deactive");
             msgBtn.disabled = false;
         }
@@ -311,48 +315,47 @@
         }
 
         newFiles.forEach((file) => {
+            const newDataTransfer = new DataTransfer();
+            let images;
 
             postImages.push(file);
 
             const imageSrc = URL.createObjectURL(file);
 
-            // 컨테이너 div 생성
             const imageWrapper = document.createElement("div");
             imageWrapper.style.position = "relative";
             imageWrapper.style.display = "inline-block";
 
-            // 이미지 태그
             const img = document.createElement("img");
             img.src = imageSrc;
             img.className = "message-preview";
 
-            // X 버튼 생성
             const closeBtn = document.createElement("span");
             closeBtn.innerText = "×";
             closeBtn.className = "close-btn";
 
-            // 클릭 시 삭제
             closeBtn.addEventListener("click", () => {
                 const index = postImages.indexOf(file);
-                if (index !== -1){
+                if (index !== -1) {
                     postImages.splice(index, 1);
                     imageWrapper.remove();
                     imageUpdateDispaly();
                 }
             });
 
-            imageWrapper.appendChild(img); // div 안에 img 를 붙여준다
-            imageWrapper.appendChild(closeBtn); // div 안에 closeBtn 붙여준다
-            ImageInput.dataTransfer.add(file); // input 입력시 이미지 파일 넣기
+            imageWrapper.appendChild(img);
+            imageWrapper.appendChild(closeBtn);
             previewContainer.appendChild(imageWrapper);
 
+            images = postImages;
+            images.forEach(file => newDataTransfer.items.add(file));
+            ImageInput.files = newDataTransfer.files;
         });
 
         // input 초기화해서 같은 파일도 다시 선택 가능하게
         event.target.value = '';
         imageUpdateDispaly();
     }
-
 
 
     // 받아온 메세지 및 이미지를 실시간으로 DB 에서 보여주기
@@ -413,22 +416,19 @@
         const senderIdx = document.getElementById("loginIdx").value;
         const receiverIdx = document.getElementById("targetIdx").value;
         const message = document.getElementById("msgInput").value;
-        const ImageInput = document.getElementById("imageUpload");
-        const files = ImageInput.files;
         const now = new Date();
-        const sendAt = now.toISOString(); // ISO 8601 형식 (서버, JS 모두 호환)
+        const sendAt = now.toISOString();
 
         let imageUrls = [];
 
-        if (message === "" && files.length === 0) {
-            return;
-        }
+        if (message.trim() === "" && postImages.length === 0) return;
 
-        if (files.length > 0) {
+        if (postImages.length > 0) {
             const formData = new FormData();
-            for (const file of files) {
-                formData.append("image", file) // 서버에서 @RequestParam("image")로 받음
+            for (const file of postImages) {
+                formData.append("image", file);
             }
+
             try {
                 const response = await fetch("/upload/message-image", {
                     method: "POST",
@@ -447,20 +447,24 @@
         }
 
         stompClient.send("/app/chat/send", {}, JSON.stringify({
-            senderIdx: senderIdx,
-            receiverIdx: receiverIdx,
+            senderIdx,
+            receiverIdx,
             content: message,
-            sendAt: sendAt,
+            sendAt,
             contentImage: imageUrls,
             imagesContent: imageUrls.join(",")
         }));
 
-        // 입력창 초기화
-        document.getElementById("msgInput").value = '';
-        imageUrls.value = "";
-        document.getElementById("sendMessage").classList.add("deactive");
+        resetInput();
     }
 
+
+    function resetInput(){
+        ImageInput.value = '';                // input[type=file] 비움
+        postImages.length = 0;               // 배열 초기화
+        previewContainer.innerHTML = '';     // 프리뷰 화면 초기화
+        imageUpdateDispaly();
+    }
 
     const myIdx = [[${login.idx}]];
 
