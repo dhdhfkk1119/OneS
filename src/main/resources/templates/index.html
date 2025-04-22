@@ -324,7 +324,7 @@
                 closeBtn.textContent = "X";
                 closeBtn.onclick = function () {
                     const currentIndex = images.indexOf(file);
-                    removeImage(currentIndex, isComment, boardId); // ✨ boardId 넘기기
+                    removeImage(currentIndex, isComment, boardId); // boardId 넘기기
                 };
 
                 imgWrapper.appendChild(img);
@@ -339,7 +339,7 @@
             reader.readAsDataURL(file);
         });
 
-        updateFileInput(isComment, boardId); // ✨ boardId 넘기기
+        updateFileInput(isComment, boardId); // boardId 넘기기
     }
 
 

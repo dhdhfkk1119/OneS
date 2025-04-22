@@ -356,6 +356,10 @@ body{
 }
 .message-preview {
     position: relative;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 /* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
 
@@ -421,3 +425,21 @@ body{
 }
 
 /* ---------------------------- follower 리스트 팝업 css 끝 -----------------------------*/
+
+
+/* close btn에 대한 css  */
+.close-btn {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
