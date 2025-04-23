@@ -45,112 +45,109 @@ public class MessageController {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Member targetUser = memberRepository.findByIdx(idx)
-                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다")); // 상
+                .orElseThrow(() -> new RuntimeException("해당 유저를 찾을 수 없습니다"));
 
+        // 현재 사용자와 대상 사용자 간의 메시지 가져오기
         List<Message> messageList = messageRepository.findMessagesBetweenUsers(loginUser.getIdx(), targetUser.getIdx());
 
-        Map<Long,List<String>> messageImageMap = new HashMap<>();
-
+        // 메시지 이미지 리스트 맵핑
+        Map<Long, List<String>> messageImageMap = new HashMap<>();
         for (Message message : messageList) {
-            List<String> ImagesList = new ArrayList<>();
-            if(message.getImagesContent() != null && !message.getImagesContent().isEmpty()) {
-                ImagesList = Arrays.asList(message.getImagesContent().split(","));
+            if (message.getImagesContent() != null && !message.getImagesContent().isEmpty()) {
+                List<String> images = Arrays.asList(message.getImagesContent().split(","));
+                messageImageMap.put(message.getMessageIdx(), images);
             }
-            messageImageMap.put(message.getMessageIdx(), ImagesList);
         }
 
+        // 쪽지 보낸/받은 유저 리스트
+        Set<Long> addedIds = new HashSet<>();
+        List<Member> sendUserList = new ArrayList<>();
 
-        // 내가 팔로우 하고있는 나를 팔로우 하고 있는 유저들의 리스트
+        // 안 읽은 메시지 수 맵핑
+        Map<Long, Integer> unreadMessageCountMap = new HashMap<>();
+
+        // 최근 메시지 맵핑
+        Map<Long, Message> recentlyMessageMap = new HashMap<>();
+
+        // 1. 내가 보낸 유저 추가
+        List<Message> senderMessages = messageRepository.findBySenderIdx(loginUser.getIdx());
+        for (Message msg : senderMessages) {
+            Long receiverIdx = msg.getReceiverIdx();
+            if (addedIds.add(receiverIdx)) {
+                Member member = memberRepository.findByIdx(receiverIdx)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+                if (keyword == null || member.getUserName().contains(keyword)) {
+                    sendUserList.add(member);
+                }
+            }
+        }
+
+        // 2. 나에게 보낸 유저 추가
+        List<Message> receiverMessages = messageRepository.findByReceiverIdx(loginUser.getIdx());
+        for (Message msg : receiverMessages) {
+            Long senderIdx = msg.getSenderIdx();
+            if (addedIds.add(senderIdx)) {
+                Member member = memberRepository.findByIdx(senderIdx)
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+                if (keyword == null || member.getUserName().contains(keyword)) {
+                    sendUserList.add(member);
+                }
+            }
+
+            // 안 읽은 메시지 수 세기
+            List<Message> unread = messageRepository.findBySenderIdxAndReceiverIdxAndIsReadFalse(senderIdx, loginUser.getIdx());
+            if (!unread.isEmpty()) {
+                unreadMessageCountMap.put(senderIdx, unread.size());
+            }
+        }
+
+        // 3. 최근 메시지 맵핑
+        for (Member user : sendUserList) {
+            List<Message> betweenMessages = messageRepository.findMessagesBetweenUsers(loginUser.getIdx(), user.getIdx());
+            if (!betweenMessages.isEmpty()) {
+                betweenMessages.sort(Comparator.comparing(Message::getSendAt).reversed());
+                recentlyMessageMap.put(user.getIdx(), betweenMessages.get(0));
+            }
+        }
+
+        // 4. 팔로우 리스트 구성
         Set<Long> followIds = new HashSet<>();
         List<Member> followListMap = new ArrayList<>();
 
-        // 제일 최근 메세지 들고오기
-        Map<Long, Message> RecentlyMessage = new HashMap<>();
-
-        // 내가 메세지를 보낸 유저의 정보를 가져옴
-        Set<Long> addedIds = new HashSet<>();
-        List<Member> SendUserList = new ArrayList<>();
-
-        // 나에게만 메세지를 보낸 메세지 내용
-        Map<Long, Integer> unreadMessageCountMap = new HashMap<>();
-
-
-        List<Message> senderUser = messageRepository.findBySenderIdx(loginUser.getIdx());
-        for (Message message : senderUser) {
-            if (!addedIds.contains(message.getReceiverIdx())) {
-                Member member = memberRepository.findByIdx(message.getReceiverIdx())
+        List<Follow> followers = followRepository.findByFollowLoginidx(loginUser.getIdx());
+        for (Follow follow : followers) {
+            if (followIds.add(follow.getFollowUseridx())) {
+                Member member = memberRepository.findByIdx(follow.getFollowUseridx())
                         .orElseThrow(() -> new RuntimeException("User not found"));
-                if (keyword == null || member.getUserName().contains(keyword)) {
-                    SendUserList.add(member);
-                    addedIds.add(message.getReceiverIdx());
-
-                    // 제일 최근 메세지 들고오기
-                    Optional<Message> recently = messageRepository
-                            .findTopBySenderIdxAndReceiverIdxOrderBySendAtDesc(loginUser.getIdx(), message.getReceiverIdx());
-
-                    recently.ifPresent(msg -> RecentlyMessage.put(message.getReceiverIdx(), msg));
-                }
-            }
-        }
-
-        List<Message> receiverUser = messageRepository.findByReceiverIdx(loginUser.getIdx()); // 나에게 메세지를 보낸 유저
-        for (Message message : receiverUser) {
-            if (!addedIds.contains(message.getSenderIdx())) {
-                Member member = memberRepository.findByIdx(message.getSenderIdx())
-                        .orElseThrow(() -> new RuntimeException("User not found"));
-                if (keyword == null || member.getUserName().contains(keyword)) {
-                    SendUserList.add(member);
-                    addedIds.add(message.getSenderIdx());
-
-                    // 제일 최근 메세지 들고오기
-                    Optional<Message> recently = messageRepository
-                            .findTopBySenderIdxAndReceiverIdxOrderBySendAtDesc(message.getSenderIdx(), loginUser.getIdx());
-                    recently.ifPresent(msg -> RecentlyMessage.put(message.getSenderIdx(), msg));
-                }
-            }
-
-            // 상대가 나에게 보낸 메시지 중 안 읽은 것만 필터링
-            List<Message> unreadMessages = messageRepository.findBySenderIdxAndReceiverIdxAndIsReadFalse(message.getSenderIdx(), loginUser.getIdx());
-
-            if (!unreadMessages.isEmpty()) {
-                unreadMessageCountMap.put(message.getSenderIdx(), unreadMessages.size());
-            }
-        }
-
-
-        List<Follow> followerlist = followRepository.findByFollowLoginidx(loginUser.getIdx()); // 현재 로그인 한 유저의 팔로워 목록
-        for (Follow follower : followerlist) {
-            if (followIds.add(follower.getFollowUseridx())) {
-                Member member = memberRepository.findByIdx(follower.getFollowUseridx()).orElseThrow(() -> new RuntimeException("User not found"));
-                followListMap.add(member);
-            }
-
-        }
-
-        List<Follow> followinglist = followRepository.findByFollowUseridx(loginUser.getIdx()); // 현재 로그인 한 유저의 팔로잉 목록
-        for (Follow follower : followinglist) {
-            if (followIds.add(follower.getFollowLoginidx())) {
-                Member member = memberRepository.findByIdx(follower.getFollowLoginidx()).orElseThrow(() -> new RuntimeException("User not found"));
                 followListMap.add(member);
             }
         }
 
+        List<Follow> followings = followRepository.findByFollowUseridx(loginUser.getIdx());
+        for (Follow follow : followings) {
+            if (followIds.add(follow.getFollowLoginidx())) {
+                Member member = memberRepository.findByIdx(follow.getFollowLoginidx())
+                        .orElseThrow(() -> new RuntimeException("User not found"));
+                followListMap.add(member);
+            }
+        }
 
-        // 상대방이 나에게 보낸 메시지 중 안 읽은 거 읽음 처리
+        // 5. 안 읽은 메시지 읽음 처리
         messageService.markMessagesAsRead(targetUser.getIdx(), loginUser.getIdx());
 
-        model.addAttribute("login", loginUser); // 현재 로그인 한 유저의 정보
-        model.addAttribute("member", targetUser); // 메세지를 받는 상대 유저의 정보
-        model.addAttribute("messages", messageList); // 메세지 리스트 가져오기
-        model.addAttribute("ImageList",messageImageMap); // 메세지 이미지 리스트
-        model.addAttribute("sendUserList", SendUserList); // 내가 메세지를 보낸 유저의 리스트 가져오기
-        model.addAttribute("recentlyMessage", RecentlyMessage); // 메세지를 나눴던 제이 최근 유저
-        model.addAttribute("followList", followListMap); // 내가 팔로우 하고 있는 유저
-        model.addAttribute("unreadMessageCount", unreadMessageCountMap); // 메세지를 읽지 않았으면 경고 표시및 갯수
-
+        // 모델 속성 등록
+        model.addAttribute("login", loginUser);
+        model.addAttribute("member", targetUser);
+        model.addAttribute("messages", messageList);
+        model.addAttribute("ImageList", messageImageMap);
+        model.addAttribute("sendUserList", sendUserList);
+        model.addAttribute("recentlyMessage", recentlyMessageMap);
+        model.addAttribute("followList", followListMap);
+        model.addAttribute("unreadMessageCount", unreadMessageCountMap);
 
         return "message";
     }
+
 
     @PostMapping("/message/search")
     @ResponseBody

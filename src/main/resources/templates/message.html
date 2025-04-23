@@ -93,13 +93,14 @@
                             <span class="userId" th:text="${'@' + sendUser.userId}"></span>
 
                             <!-- ! 알림 및 갯수 표시 -->
-                            <span th:if="${unreadMessageCount[sendUser.idx]} != null" class="unread-badge" sp>
+                            <span th:if="${unreadMessageCount[sendUser.idx]} != null" class="unread-badge">
                                 <span class="unread-count" th:text="${unreadMessageCount[sendUser.idx]}"></span>
                             </span>
                         </div>
 
                         <div>
-                            <span class="recently-message" th:text="${recentlyMessage[sendUser.idx]?.content}"></span>
+                            <span class="recently-message" th:text="${recentlyMessage[sendUser.idx].content}">
+                            </span>
                         </div>
                     </div>
                 </div>
