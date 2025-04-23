@@ -142,7 +142,7 @@
                             <p th:text="${msg.content}"></p>
                             <div th:if="${msg.imagesContent != null and !#strings.isEmpty(msg.imagesContent)}"
                                  th:with="imgList=${ImageList[msg.messageIdx]}, imgSize=${#lists.size(ImageList[msg.messageIdx])}"
-                                 class="image-wrapper" th:classappend="' count-' + ${imgSize}">
+                                 class="image-wrapper" id="image-wrapper" th:classappend="' count-' + ${imgSize}">
                                 <img th:each="imgUrl : ${imgList}"
                                      th:src="@{'/message-images/' + ${imgUrl}}"
                                      class="message-image">
@@ -217,6 +217,11 @@
 <script>
 
 
+    document.addEventListener("DOMContentLoaded",function (){
+        const messageContainer = document.getElementById('messageContainer');
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    });
+
     // 쪽지 보내기 프롤스 버튼 눌러서 팝업 등장
     document.querySelectorAll(".message-add").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -256,7 +261,6 @@
             .then(res => res.json())
             .then(data => {
                 console.log(data);
-                updateUserList(data);
             });
 
     }
@@ -364,40 +368,6 @@
     }
 
 
-    // 받아온 메세지 및 이미지를 실시간으로 DB 에서 보여주기
-    function updateUserList(data) {
-        const list = document.querySelector(".message-items");
-
-        if (!list) {
-            console.error("message-items DOM이 존재하지 않음");
-            return;
-        }
-
-        list.innerHTML = "";
-
-        data.forEach(user => {
-            const div = document.createElement("div");
-            div.className = "message-item";
-            div.dataset.useridx = user.memberIdx;  // ✅ 이제 undefined 아님
-            div.setAttribute("onclick", "UserChange(this)");   // ✅ 클릭 이벤트 추가
-
-            div.innerHTML = `
-                <img src="/profile-images/${user.userImage || 'basic.png'}" alt="" width="50px" style="border-radius: 50%">
-                <div>
-                    <div>
-                        <span class="userName">${user.userName}</span>
-                        <span class="userId">@${user.userId}</span>
-                        <span class="unread-badge"><span class="unread-count">0</span></span>
-                    </div>
-                    <div>
-                        <span class="recently-message">${user.messageContent}</span>
-                    </div>
-                </div>
-            `;
-            list.appendChild(div);
-        });
-    }
-
     let stompClient = null;
 
     // WebSock 에 연결 덴드 포인드 /ws 로 연결
@@ -432,7 +402,7 @@
         if (postImages.length > 0) {
             const formData = new FormData();
             for (const file of postImages) {
-                formData.append("image", file);
+                formData.append("image", file); // RequestParam('image') 이랑 같아야함
             }
 
             try {
@@ -483,7 +453,7 @@
         const messageRow = document.createElement('div');
         messageRow.classList.add('message-row');
 
-        const bubble = document.createElement('div'); // span보다 div가 구조상 적절
+        const bubble = document.createElement('div');
         const p = document.createElement('p');
         p.textContent = message.content;
 
@@ -518,6 +488,21 @@
         }
 
         bubble.appendChild(p);
+        if(message.imagesContent && message.imagesContent.trim() !== "") {
+            const imageWrapper = document.createElement('div');
+            imageWrapper.classList.add('image-wrapper');
+
+            const images = message.imagesContent.split(',');
+            images.forEach(img => {
+                const imageTag = document.createElement('img');
+                imageTag.src = `/message-images/${img}`;
+                imageTag.classList.add('message-image');
+                imageWrapper.appendChild(imageTag);
+            });
+            bubble.appendChild(imageWrapper);
+        }
+
+
         bubble.appendChild(metaDiv);
         messageRow.appendChild(bubble);
         messageContainer.appendChild(messageRow);
@@ -573,5 +558,6 @@
             })
             .catch(error => console.error("Error:", error));
     });
+
 
 </script>
