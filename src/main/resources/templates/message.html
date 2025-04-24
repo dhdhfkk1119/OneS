@@ -98,8 +98,11 @@
                             </span>
                         </div>
 
-                        <div>
-                            <span class="recently-message" th:text="${recentlyMessage[sendUser.idx].content}">
+                        <div class="recently-message">
+                            <span th:if="${recentlyMessage[sendUser.idx] != null and !#strings.isEmpty(recentlyMessage[sendUser.idx].content)}"
+                                  th:text="${recentlyMessage[sendUser.idx].content}"></span>
+                            <span th:unless="${recentlyMessage[sendUser.idx] != null and !#strings.isEmpty(recentlyMessage[sendUser.idx].content)}">
+                                이미지
                             </span>
                         </div>
                     </div>
@@ -123,7 +126,7 @@
                 <div th:text="${member.introduce}"></div>
                 <div class="user-calendar">
                     <img src="/local-images/calendar.png" alt="" class="user-details-calendar">
-                    <span th:text="${member.userAt}">가입일: 2022-05-20</span>
+                    <span th:text="${#temporals.format(member.userAt,'yyyy년MM월')}"></span>
                 </div>
                 <div class="follower-all">
                     <div class="follow-comparison" th:data-member-idx="${member.idx}">
@@ -164,19 +167,26 @@
 
             <!--  메세지 이미지 프리뷰  -->
             <div id="message-preview-list" style="position: relative; display: none">
-                <div id="message-preview" class="message-preview" style="margin-top: 10px; display: flex; gap: 5px;">
-                </div>
+                <button class="message-left message-slide-btn">
+                    <span>&lt;</span>
+                </button>
+                <div id="message-preview" class="message-preview" style="margin-top: 10px; display: flex; gap: 5px;"></div>
+                <button class="message-right message-slide-btn">
+                    <span>&gt;</span>
+                </button>
             </div>
 
             <!--  메세지를 받는 유저의 정보를 나타냄 -->
             <div class="message-compose">
                 <div class="compose-input">
-                    <label for="imageUpload" class="forImageUpload" id="forImageUpload" style="cursor: pointer;display: flex">
+                    <label for="imageUpload" class="forImageUpload" id="forImageUpload"
+                           style="cursor: pointer;display: flex">
                         <img th:src="@{'/local-images/image-file.png'}" alt="" width="20px">
                     </label>
                     <input type="hidden" id="loginIdx" th:value="${login.idx}">
                     <input type="hidden" id="targetIdx" th:value="${member.idx}">
-                    <input type="file" id="imageUpload" style="display: none" onchange="handleImageUpload(event)" multiple/>
+                    <input type="file" id="imageUpload" style="display: none" onchange="handleImageUpload(event)"
+                           multiple/>
                     <input type="text" id="msgInput" placeholder="새 쪽지 작성하기">
                     <button id="sendMessage" class="sendMessage deactive" onclick="sendMessage()">보내기</button>
                 </div>
@@ -218,7 +228,7 @@
 <script>
 
 
-    document.addEventListener("DOMContentLoaded",function (){
+    document.addEventListener("DOMContentLoaded", function () {
         const messageContainer = document.getElementById('messageContainer');
         messageContainer.scrollTop = messageContainer.scrollHeight;
     });
@@ -438,7 +448,7 @@
     }
 
 
-    function resetInput(){
+    function resetInput() {
         ImageInput.value = '';                // input[type=file] 비움
         postImages.length = 0;               // 배열 초기화
         previewContainer.innerHTML = '';     // 프리뷰 화면 초기화
@@ -489,7 +499,7 @@
         }
 
         bubble.appendChild(p);
-        if(message.imagesContent && message.imagesContent.trim() !== "") {
+        if (message.imagesContent && message.imagesContent.trim() !== "") {
             const imageWrapper = document.createElement('div');
             imageWrapper.classList.add('image-wrapper');
 

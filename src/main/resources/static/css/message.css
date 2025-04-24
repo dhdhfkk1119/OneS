@@ -55,7 +55,7 @@ body {
     padding: 5px;
     background: #ccc;
     border-radius: 8px;
-    color: #333;
+    color: black;
     font-size: 12px;
     font-weight: 700;
 }
@@ -333,8 +333,8 @@ body {
 }
 
 .send-message {
-    background-color: #0084ff;
-    color: #fff;
+    background-color: #f8d9e3;
+    color: #333;
     border-top-right-radius: 0;
     display: flex;
     flex-direction: column;
@@ -402,15 +402,8 @@ body {
     z-index: 999;
 }
 
-.message-preview {
-    position: relative;
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-}
+/* ------------------ message에서 이미지를 등록할때 프리뷰 css 시작 ---------------*/
 
-/* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
 
 
 /* ---------------------------- follower 리스트 팝업 css 시작 -----------------------------*/
@@ -477,7 +470,49 @@ body {
 /* ---------------------------- follower 리스트 팝업 css 끝 -----------------------------*/
 
 
-/* close btn에 대한 css  */
+/* ------------------ message 에서 이미지를 등록할때 프리뷰 css 끝 ---------------*/
+.message-preview {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+/* 공통 버튼 스타일 */
+.message-slide-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.4);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover 시 효과 */
+.slide-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+/* 좌우 버튼 위치 */
+.message-left {
+    left: 5px;
+}
+
+.message-right {
+    right: 5px;
+}
+
 .close-btn {
     position: absolute;
     top: 0px;
@@ -503,7 +538,7 @@ body {
 
 .image-wrapper img {
     width: 100%;
-    height: auto;
+    height: 100%;
     object-fit: cover;
     border-radius: 8px;
 }
@@ -580,3 +615,4 @@ body {
 .image-wrapper.count-10 img:nth-child(10) {
     grid-column: span 2;
 }
+/* ------------------------------- message 보내기 부문 css 끝 ----------------------*/
