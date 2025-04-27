@@ -29,7 +29,7 @@ import java.util.Optional;
 @Transactional
 public class GlobalModelAttributeAdvice {
     private final MemberRepository memberRepository;
-    
+
     // 현재 로그인한 유저의 정보를 가져옴
     @ModelAttribute
     public void addCommonAttributes(Model model) {
@@ -42,13 +42,11 @@ public class GlobalModelAttributeAdvice {
             // 로그인 성공시 해당 유저의 로그인 유무(status) -> connect 로 변경
             Optional<Member> memberOptional = memberRepository.findByUserId(userId);
 
-            if(memberOptional.isPresent()) {
+            if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
                 member.setUserStatus("connect");
                 memberRepository.save(member);
                 model.addAttribute("UserName", member.getUserName());
-
-
 
             } else {
                 model.addAttribute("UserName", "");

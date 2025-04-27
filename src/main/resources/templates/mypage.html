@@ -1,10 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: html}">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <th:block th:fragment="css">
+        <link rel="stylesheet" th:href="@{/css/mypage.css}">
+    </th:block>
 </head>
 <body>
+<th:block th:fragment="content">
+    <div class="admin-container">
+        <!-- 상단 정보 -->
+        <div class="admin-info">
+            <div>전체 회원 수: <span id="total-users">100</span></div>
+            <div>전체 게시물 수: <span id="total-posts">50</span></div>
+            <div>현재 로그인 중인 회원 수: <span id="online-users">10</span></div>
+        </div>
 
+        <!-- 왼쪽과 오른쪽 div로 나누기 -->
+        <div class="admin-content">
+            <!-- 왼쪽: 유저 승인 정보 -->
+            <div class="user-info" id="user-info">
+                <div class="unapproved-users">
+                    <h3>승인되지 않은 유저</h3>
+                    <div class="In-progress" th:each="member : ${memberList}" th:if="${member.userAction == 'In-progress'}">
+                        <div class="user-image">
+                            <img th:src="@{${'/profile-images/' + member.userImage}}" alt="" width="50px" style="border-radius: 50%">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-info-inner">
+                                <span class="user-id" th:text="${member.userName}"></span>
+                                <span class="user-name" th:text="${'@'+member.userId}"></span>
+                                <img src="/local-images/conversation.png" alt="" width="20px">
+                            </div>
+                            <div class="user-action">
+                                <button class="approve-btn" th:data-idx="${member.idx}" >승인하기</button>
+                                <button class="delete-btn" th:data-idx="${member.idx}">계정삭제 하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="approved-users" >
+                    <h3>승인된 유저</h3>
+                    <!-- 승인된 유저 목록 -->
+                    <div class="In-completed" th:each="member : ${memberList}" th:if="${member.userAction == 'In-completed'}">
+                        <div class="user-image">
+                            <img th:src="@{${'/profile-images/' + member.userImage}}" alt="" width="50px" style="border-radius: 50%">
+                        </div>
+                        <div class="user-info">
+                            <div class="user-info-inner">
+                                <span class="user-id" th:text="${member.userName}"></span>
+                                <span class="user-name" th:text="${'@'+member.userId}"></span>
+                                <img src="/local-images/conversation.png" alt="" width="20px">
+                            </div>
+                            <div class="user-action">
+                                <button class="un-approve-btn" disabled>승인완료</button>
+                                <button class="delete-btn">계정삭제 하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 게시물 정보 -->
+            <div class="post-info" id="post-info">
+                <h3>게시물 정보</h3>
+                <!-- 게시물 목록 (스크롤 가능) -->
+                <div class="post-list">
+                    <!-- 게시물 내용들 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
 </body>
 </html>
+<script>
+    document.querySelectorAll(".approve-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const setIdx = this.dataset.idx;
+            const currentBtn = this; // 버튼 참조 저장
+            fetch(`/admin/approveUser`,{
+                method : 'POST',
+                headers : {
+                    'Content-Type' : 'application/json'
+                },
+                body: JSON.stringify({userIdx : setIdx}) // userIdx 값을 Controller 보내줌
+            })
+            .then(response => response.json()) // 서버 응답을 JSON 으로 받기
+            .then(data => {
+              console.log("서버 응답 :",data);
+                // 버튼 텍스트를 "승인 완료"로 변경
+                currentBtn.textContent = "승인 완료";
+                currentBtn.classList.add("un-approve-btn");
+                // 버튼 비활성화 (원하는 경우)
+                currentBtn.disabled = true;
+            });
+        });
+    });
+</script>

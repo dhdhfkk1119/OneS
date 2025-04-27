@@ -46,6 +46,9 @@ public class MemberController {
                            Model model,
                            RedirectAttributes redirectAttributes) {
 
+        // @Valid가 userId @NotEmpty를 검사
+        // 실패시 -> bindingResult 가 자체에 오류를 담아서 return -> sign 으로 반납
+
         // 입력값 검증 후 오류가 있으면 다시 회원가입 페이지로 이동
         if (bindingResult.hasErrors()) {
             return "sign";  // sign.html로 다시 이동

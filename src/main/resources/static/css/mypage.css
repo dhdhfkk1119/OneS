@@ -1,0 +1,130 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+h3 {
+    margin-top: 0;
+}
+.admin-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.admin-info {
+    width: 100%;
+    max-width: 1180px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 12px 10px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.admin-content {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+}
+.In-progress, .In-completed {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 20px; /* 각 유저 간격 */
+    padding: 10px 0;
+    border-bottom: 1px solid #eee; /* 구분선 */
+
+}
+.user-info {
+    flex: 1;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.user-info-inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+.user-info-inner img{
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+}
+.user-id {
+    font-weight: 700;
+    font-size: 16px;
+}
+.user-name {
+    color: #777;
+    font-size: 14px;
+    font-weight: 400;
+}
+.user-action {
+    display: flex;
+    gap: 10px;
+}
+.unapproved-users {
+    margin-bottom: 25px;
+    border-top: 1px solid rgba(0, 0, 0, 10%);
+}
+.unapproved-users, .approved-users {
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-height: 300px; /* 높이를 고정시키고 스크롤 */
+    overflow-y: auto;
+}
+
+.post-info {
+    flex: 2;
+    background-color: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    max-height: 800px; /* 게시물 정보의 높이를 맞춰 설정 */
+    overflow-y: auto;
+}
+
+.post-list {
+    max-height: 100%;
+    overflow-y: auto;
+}
+.user-action button {
+    width: 50%; /* 둘이 합쳐서 100% */
+    padding: 6px 0;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+/* 승인 버튼 */
+.approve-btn {
+    background-color: #333;
+    color: white;
+    cursor: pointer;
+}
+/* 승인 완료 버튼 */
+.un-approve-btn {
+    background: #666666;
+    cursor: not-allowed;
+    color:white;
+}
+
+/* 계정 삭제 버튼 */
+.delete-btn {
+    cursor: pointer;
+    background-color: white;
+    color: red;
+    border: 1px solid red;
+}
+.delete-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+}

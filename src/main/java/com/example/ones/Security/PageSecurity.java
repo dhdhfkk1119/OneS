@@ -2,7 +2,6 @@ package com.example.ones.Security;
 
 
 import com.example.ones.CustomHander.CustomLogoutSuccessHandler;
-import com.example.ones.CustomHander.GlobalModelAttributeAdvice;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +19,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @RequiredArgsConstructor
 public class PageSecurity {
 
+    // 로그아웃 할시에 세션 및 유저 상태 변경
     private final CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
@@ -37,8 +37,9 @@ public class PageSecurity {
                         .requestMatchers("/login", "/board_list", "/sign", "/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin((formLogin) -> formLogin
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/"))
+                        .loginPage("/login") // 사용자 지정 로그인 페이지
+                        .defaultSuccessUrl("/") // 로그인 성공 시 이동할 URL
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
@@ -49,9 +50,9 @@ public class PageSecurity {
         return http.build();
     }
 
-    // 로그인 인증 유무 체크
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 }

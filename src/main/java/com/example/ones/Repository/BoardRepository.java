@@ -17,4 +17,8 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
      // 검색 및 정렬기능
      List<Board> findByBoardContentContainingIgnoreCase(String keyword, Sort sort);
-}
+     
+     // 모든 게시물 가져오기
+     List<Board> findAllByOrderByBoardIdxDesc();
+}         
+
