@@ -179,7 +179,7 @@ body {
     left: 0;
     border-radius: 15px;
     font-size: 15px;
-    background-color: rgba(15, 20, 25, 0.75);
+    background: #f8d9e3;
     border: none;
 }
 .board-slide-right{
@@ -187,7 +187,7 @@ body {
     z-index: 999;
     border-radius: 15px;
     font-size: 15px;
-    background-color: rgba(15, 20, 25, 0.75);
+    background: #f8d9e3;
     border: none;
 }
 .img-list-inner {

@@ -24,6 +24,8 @@ public interface MemberRepository extends JpaRepository<Member, Integer> {
 
     List<Member> findAllByOrderByUserAtDesc();
 
+    Long countByUserAction(String userAction);
+
     boolean existsByUserId(String userid); // 회원 가입 할때 체크
     boolean existsByUserPhoneNumber(String phoneNumber);  // 회원 가입 할때 체크
     boolean existsByUserEmail(String email);  // 회원 가입 할때 체크
