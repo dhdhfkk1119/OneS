@@ -10,7 +10,7 @@
 <body>
 
 <!-- 헤더 (Header) -->
-<th:block >
+<th:block>
     <header class="layout-header">
         <div class="header-container">
             <div class="logo">
@@ -18,14 +18,17 @@
             </div>
             <nav class="header-nav">
                 <ul>
-                    <li sec:authorize="isAnonymous()" ><a href="/login">로그인</a></li>
-                    <li sec:authorize="isAuthenticated()" ><a href="/mypage"><span class="layout-username" th:text="${role}"></span></a></li>
-                    <li sec:authorize="isAuthenticated()" >
+                    <li sec:authorize="isAnonymous()"><a href="/login">로그인</a></li>
+                    <li sec:authorize="isAuthenticated()"><a href="/mypage">
+                        <span class="layout-username" th:text="${role}"></span></a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()">
                         <form action="/logout" method="post">
-                            <button type="submit">로그아웃</button>
+                            <button type="submit" class="layout-logout-btn">로그아웃
+                            </button>
                         </form>
                     </li>
-                    <li sec:authorize="isAnonymous()" ><a href="/sign">회원가입</a></li>
+                    <li sec:authorize="isAnonymous()"><a href="/sign">회원가입</a></li>
                 </ul>
             </nav>
         </div>
@@ -35,12 +38,12 @@
 <!-- 페이지 콘텐츠 -->
 <main>
     <th:block th:replace="~{::content}"></th:block>
-        <!-- 콘텐츠 영역 (이곳에 페이지마다 다른 내용을 넣으면 됩니다) -->
+    <!-- 콘텐츠 영역 (이곳에 페이지마다 다른 내용을 넣으면 됩니다) -->
     </div>
 </main>
 
 <!-- 푸터 (Footer) -->
-<th:block >
+<th:block>
     <footer>
         <div class="footer-container">
             <p>© 2025 OneS. All rights reserved.</p>

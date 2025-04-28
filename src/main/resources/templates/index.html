@@ -10,6 +10,21 @@
 </head>
 <body>
 <th:block th:fragment="content">
+
+    <div sec:authorize="isAuthenticated()" th:if="${member.userAction == 'In-progress'}" class="member-In-progress">
+        <!-- 로그아웃 버튼 -->
+        <div style="position: absolute; top: 20px; right: 30px;">
+            <form action="/logout" method="post">
+                <button type="submit" class="logout-btn">로그아웃</button>
+            </form>
+        </div>
+
+        <!-- 중앙 메시지 박스 -->
+        <div class="member-center-box">
+            <h2 style="margin: 0; font-size: 24px;">아직 승인 대기중입니다</h2>
+        </div>
+    </div>
+
     <div class="navbar">
         <div class="navbar-inner">
             <a href="/">게시물</a>

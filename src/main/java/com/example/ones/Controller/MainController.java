@@ -34,7 +34,7 @@ public class MainController {
                     .orElseThrow(() -> new RuntimeException("유저 정보를 찾을 수 없습니다"));
         }
 
-        List<Board> boards = boardRepository.findAll(); // 전체 게시물 가져오기
+        List<Board> boards = boardRepository.findAllByOrderByBoardIdxDesc(); // 전체 게시물 가져오기
         Map<Long,Member> boardMembers = new HashMap<>(); // 게시물을 작성한 유저의 정보를 가져오기
         Map<Long, List<String>> boardImages = new HashMap<>(); // 각 게시물에 해당하는 이미지 리스트 가져오기
 
