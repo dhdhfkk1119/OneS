@@ -45,11 +45,14 @@ public class ProfileController {
 
 
 
+        Map<Long, Long> commentCounts = new HashMap<>(); // 게시물에 달린 댓글 갯수
+
         // 자신이 작성한 게시물에 대한 API
         Map<Long,List<Comment>> commentMap = new HashMap<>(); // 게시물에 대한 댓글 가져오기
         Map<Long,List<String>> commentImagesMap = new HashMap<>(); // 댓글에 대한 이미지 가져오기
         Map<Long,List<String>> boardImagesMap = new HashMap<>(); // 게시물에 대한 이미지 가져오기
         Map<Long,Member> commentMemberMap = new HashMap<>(); // 댓글 작성자유저 정보 가져오기
+
 
         // 좋아요 section 부분
         Map<Long,Board> UserboardLikeMap = new HashMap<>();// 자신이 좋아요를 누른 게시물에 정보를 가져옴
@@ -79,6 +82,9 @@ public class ProfileController {
                         memberRepository.findByIdx(boardWriteidx)
                                 .ifPresent(writer ->
                                         UserboardMemberMap.put(boardLike.getLikeIdx(), writer));
+
+                        Long CommentCount = commentRepository.countByCommentBoardidx(board.getBoardIdx());
+                        commentCounts.put(board.getBoardIdx(), CommentCount);
 
                         List<String> images = new ArrayList<>();
                         if (board.getBoardImages() != null && !board.getBoardImages().isEmpty()) {
@@ -115,6 +121,10 @@ public class ProfileController {
                                 .computeIfAbsent(board, k -> new ArrayList<>())
                                 .add(comment);
 
+                        // 댓글단 게시물에 게시물 댓글 수
+                        Long CommentCount = commentRepository.countByCommentBoardidx(board.getBoardIdx());
+                        commentCounts.put(board.getBoardIdx(), CommentCount);
+
                         // 게시물에 대한 작성자 정보 가져오기
                         Long boardWriteidx = board.getBoardUseridx();
                         memberRepository.findByIdx(boardWriteidx)
@@ -127,6 +137,8 @@ public class ProfileController {
                             images = Arrays.asList(board.getBoardImages().split(","));
                         }
                         commentboardImagesMap.put(comment.getCommentIdx(), images);
+
+
                     });
 
             List<String> images = new ArrayList<>();
@@ -141,6 +153,10 @@ public class ProfileController {
         // 현재 로그인한 유저의 게시물 가져오기
         List<Board> board = boardRepository.findByBoardUseridx(member.getIdx());
         for(Board boardOpt : board) {
+            Long CommentCount = commentRepository.countByCommentBoardidx(boardOpt.getBoardIdx());
+            commentCounts.put(boardOpt.getBoardIdx(), CommentCount);
+
+
             List<Comment> comments = commentRepository.findByCommentBoardidx(boardOpt.getBoardIdx());
             commentMap.put(boardOpt.getBoardIdx(), comments);
 
@@ -161,6 +177,8 @@ public class ProfileController {
                         .orElseThrow(() -> new RuntimeException("User not found"));
                 commentMemberMap.put(comment.getCommentIdx(), memberOpt);
             }
+
+
         }
 
         model.addAttribute("boardList", board); // 로그인한 유저의 게시물 가져오기
@@ -187,6 +205,8 @@ public class ProfileController {
         model.addAttribute("likeboardComment",likeboardCommentMap); // 자신이 좋아요 누른 게시물의 댓글을 가져오기
         model.addAttribute("likeboardCommentImages",likeboardCommentImagesMap); // 자신이 누른 좋아아요 게시물의 이미지 , 구분하기
         model.addAttribute("likeboardCommentMember",likeboardCommentMemberMap); // 자신이 누른 좋아요의 게시물에 댓글에 작성자를 가져오기
+
+        model.addAttribute("commentCounts", commentCounts); // 게시물에 달린 댓글 갯수
         return "profile";
 
     }

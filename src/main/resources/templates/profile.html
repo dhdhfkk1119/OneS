@@ -144,7 +144,7 @@
             </div>
 
             <!-- 삭제 폼 (처음엔 숨김) -->
-            <div class="delete-form">
+            <div class="delete-form" th:data-idx="${boards.boardIdx}">
                 <span>해당 게시물 삭제</span>
             </div>
             <div class="post-header">
@@ -169,7 +169,7 @@
                 </div>
             </a>
             <div class="profile-actions">
-                <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
+                <span class="toggle-comments">💬 <span th:text="${commentCounts[boards.boardIdx]}"></span></span>
                 <span>
                     <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
                     <span class="board-like-count" th:text="${boards.boardLike}"></span>
@@ -331,7 +331,7 @@
 
                         <!-- 게시물 액션 -->
                         <div class="profile-actions-comments">
-                            <span class="toggle-comments">💬 <span th:text="${board.boardComent}"></span></span>
+                            <span class="toggle-comments">💬 <span th:text="${commentCounts[board.boardIdx]}"></span></span>
                             <span>
                                 <span class="boardLike-btn" th:data-board-idx="${board.boardIdx}">❤️</span>
                                 <span class="board-like-count" th:text="${board.boardLike}"></span>
@@ -1028,6 +1028,40 @@
         const deleteForm = post.querySelector('.delete-form');
         deleteForm.classList.toggle('show');
     }
+
+    // 게시글 삭제 버튼
+    document.querySelectorAll('.delete-form').forEach(btn => {
+        btn.addEventListener("click", function () {
+            const idx = btn.dataset.idx;
+
+            const isConfirmed = confirm("정말 이 유저의 게시물을 삭제하시겠습니까?");
+            if (!isConfirmed) {
+                return;
+            }
+
+            fetch(`/board/Delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({boardIdx: idx}) // useridx 값으로 JSON을 보낸다
+            })
+                .then(response => response.json()) // 서버 응답을 JSON으로 받기
+                .then(data => {
+                    console.log("서버 응답 :", data);
+                    if (data.BoardCount !== undefined) {
+                        document.getElementById("total-posts").textContent = data.BoardCount;
+                    }
+
+                    // 삭제된 게시글을 화면에서도 지운다
+                    const postElement = btn.closest('.post');
+                    if (postElement) {
+                        postElement.remove();  // DOM에서 삭제
+                    }
+                });
+        });
+    });
+
 
     // 팔로우하기 기능 API
     document.addEventListener("DOMContentLoaded", function () {

@@ -19,8 +19,13 @@
             <nav class="header-nav">
                 <ul>
                     <li sec:authorize="isAnonymous()"><a href="/login">로그인</a></li>
-                    <li sec:authorize="isAuthenticated()"><a href="/mypage">
-                        <span class="layout-username" th:text="${role}"></span></a>
+                    <li sec:authorize="isAuthenticated()">
+                        <a th:if="${role == 'ROLE_USER'}" href="/mypage">
+                            <span class="layout-username" th:text="${role}"></span>
+                        </a>
+                        <a th:if="${role == 'ROLE_ADMIN'}" href="/admin">
+                            <span class="layout-username" th:text="${role}"></span>
+                        </a>
                     </li>
                     <li sec:authorize="isAuthenticated()">
                         <form action="/logout" method="post">

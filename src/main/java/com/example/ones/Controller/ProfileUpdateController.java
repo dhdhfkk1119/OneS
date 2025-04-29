@@ -3,6 +3,7 @@ package com.example.ones.Controller;
 import com.example.ones.Entity.Member;
 import com.example.ones.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,8 @@ public class ProfileUpdateController {
 
     private final MemberRepository memberRepository;
 
-    public String uploadURL = "C:/Project/OneS/src/main/resources/static/profile-images";
+    @Value("${file.upload-profile}")
+    public String uploadURL;
 
     @PostMapping("/profile/update")
     public ResponseEntity<Map<String,Object>> updateProfile(

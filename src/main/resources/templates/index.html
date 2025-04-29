@@ -104,7 +104,7 @@
             </div>
         </a>
         <div class="post-actions">
-            <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
+            <span class="toggle-comments">💬 <span th:text="${commentCounts[boards.boardIdx]}"></span></span>
             <span>
                 <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
                 <span class="board-like-count" th:text="${boards.boardLike}"></span>

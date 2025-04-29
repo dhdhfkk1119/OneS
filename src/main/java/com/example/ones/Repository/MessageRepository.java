@@ -31,6 +31,7 @@ public interface MessageRepository extends JpaRepository<Message, Integer> {
     // 현재 로그인한 유저에게 보낸 메세지를 읽었는지 체크한다
     List<Message> findBySenderIdxAndReceiverIdxAndIsReadFalse(Long senderIdx, Long receiverIdx); // 상대방이 보낸 메세지를 읽 지않았으면
 
+    List<Message> findBySenderIdxOrReceiverIdx(Long senderIdx, Long receiverIdx);
 
     @Query(value = """
     SELECT 

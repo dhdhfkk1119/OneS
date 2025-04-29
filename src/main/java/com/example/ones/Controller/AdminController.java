@@ -8,7 +8,6 @@ import com.example.ones.Repository.BoardRepository;
 import com.example.ones.Repository.CommentRepository;
 import com.example.ones.Repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.sql.Delete;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.Authentication;
@@ -29,8 +28,8 @@ public class AdminController {
     private final BoardRepository boardRepository;
     private final CommentRepository commentRepository;
 
-    @GetMapping("/mypage")
-    public String mypage(Principal principal, Model model) {
+    @GetMapping("/admin")
+    public String adminPage(Principal principal, Model model) {
 
         // 헌재 로그인한 유저의 인증정보를 가져온다
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -120,7 +119,7 @@ public class AdminController {
 
         }
 
-        return "mypage";
+        return "admin";
     }
     
     // 회원가입 유저 승인하기

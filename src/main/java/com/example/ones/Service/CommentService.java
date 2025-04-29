@@ -8,6 +8,7 @@ import com.example.ones.Repository.CommentRepository;
 import com.example.ones.Repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,7 +29,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
 
-    public String uploadURL = "C:/Project/OneS/src/main/resources/static/comment-images";
+    @Value("${file.upload-comment}")
+    public String uploadURL;
 
     @Transactional
     public Comment registerComment(Comment comment, MultipartFile[] files, Long boardidx, Long useridx) throws IOException {
@@ -38,7 +40,6 @@ public class CommentService {
 
         if (optionalBoard.isPresent()) {
             Board board = optionalBoard.get(); // 실제 Board 객체 꺼내기
-            board.setBoardComent(board.getBoardComent() + 1); // 댓글 수 1 증가
             board.setBoardView(board.getBoardView() + 1);
             boardRepository.save(board); // 저장
         }

@@ -5,539 +5,63 @@
     <title>Title</title>
     <th:block th:fragment="css">
         <link rel="stylesheet" th:href="@{/css/mypage.css}">
-        <link rel="stylesheet" th:href="@{/css/index.css}">
-        <link rel="stylesheet" th:href="@{/css/profile.css}">
     </th:block>
 </head>
 <body>
 <th:block th:fragment="content">
-    <div class="admin-container">
-        <!-- 상단 정보 -->
-        <div class="admin-info">
-            <div>전체 회원 수: <span id="total-users" th:text="${memberList.size()}"></span></div>
-            <div>전체 게시물 수: <span id="total-posts" th:text="${boardList.size()}"></span></div>
-            <div>현재 로그인 중인 회원 수: <span id="online-users" th:text="${connectMember}"></span></div>
+    <div class="mypage-container">
+        <div class="mypage-title">마이페이지</div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">회원 번호 : <span class="post-count" th:text="${member.idx}"></span></label>
         </div>
 
-        <!-- 왼쪽과 오른쪽 div로 나누기 -->
-        <div class="admin-content">
-            <!-- 왼쪽: 유저 승인 정보 -->
-            <div class="user-info" id="user-info">
-                <div class="unapproved-users">
-                    <h3>
-                        <span>승인되지 않은 유저 :</span>
-                        <span th:text="${InProgress}" class="action-count" id="InProgress"></span>
-                    </h3>
-                    <div class="In-progress" th:each="member : ${memberList}"
-                         th:if="${member.userAction == 'In-progress'}">
-                        <div class="user-image">
-                            <img th:src="@{${'/profile-images/' + member.userImage}}" alt="" width="50px"
-                                 style="border-radius: 50%">
-                        </div>
-                        <div class="user-info">
-                            <div class="user-info-inner">
-                                <span class="user-name" th:text="${member.userName}"></span>
-                                <span class="user-id" th:text="${'@'+member.userId}"></span>
-                            </div>
-                            <div class="user-action">
-                                <button class="approve-btn" th:data-idx="${member.idx}">승인하기</button>
-                                <button class="delete-btn" th:data-idx="${member.idx}">계정삭제 하기</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="approved-users">
-                    <h3>
-                        <span>승인된 유저 :</span>
-                        <span th:text="${InCompleted}" id="InCompleted" class="action-count"></span>
-                    </h3>
-                    <!-- 승인된 유저 목록 -->
-                    <div class="In-completed" th:each="member : ${memberList}"
-                         th:if="${member.userAction == 'In-completed'}">
-                        <a th:href="@{${'/profile/' + member.idx}}">
-                            <div class="user-image">
-                                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="" width="50px"
-                                     style="border-radius: 50%">
-                            </div>
-                        </a>
-                        <div class="user-info">
-                            <div class="user-info-inner">
-                                <span class="user-name" th:text="${member.userName}"></span>
-                                <span class="user-id" th:text="${'@'+member.userId}"></span>
-                                <a th:href="@{${'/message/' + member.idx}}">
-                                    <img src="/local-images/conversation.png" alt="" width="20px">
-                                </a>
-                            </div>
-                            <div class="user-action">
-                                <button class="un-approve-btn" disabled>승인완료</button>
-                                <button class="delete-btn" th:data-idx="${member.idx}">계정삭제 하기</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 오른쪽: 게시물 정보 -->
-            <div class="post-info" id="post-info">
-                <h3>게시물 정보</h3>
-                <!-- 게시물 목록 (스크롤 가능) -->
-                <div class="post-list">
-                    <div class="post" th:each="boards : ${boardList}" style="position: relative">
-                        <!-- 삭제 버튼 -->
-                        <div class="delete-section">
-                            <div class="delete-section-inner" onclick="toggleDeleteForm(this)">
-                                <span class="delete-span">...</span>
-                            </div>
-                        </div>
-
-                        <!-- 삭제 폼 (처음엔 숨김) -->
-                        <div class="delete-form" th:data-idx="${boards.boardIdx}">
-                            <span>해당 게시물 삭제</span>
-                        </div>
-
-                        <div class="post-header">
-                            <a th:href="@{'/profile/' + ${writers[boards.boardIdx].idx}}">
-                                <img class="profile-img"
-                                     th:src="@{'/profile-images/' + ${writers[boards.boardIdx].userImage}}"
-                                     alt="프로필">
-                            </a>
-                            <div class="board-user-info">
-                                <span class="user-name" th:text="${writers[boards.boardIdx].userName}"></span>
-                                <span class="user-id" th:text="${'@' +writers[boards.boardIdx].userId}"></span>
-                            </div>
-                            <span class="time" th:data-time="${boards.boardAt}"></span>
-                        </div>
-
-                        <a class="boardDetail" th:href="@{${'/board/' + boards.boardIdx}}">
-                            <div class="post-content" th:text="${boards.boardContent}">
-                            </div>
-                            <div class="board-img-list">
-                                <div class="board-img-list-inner">
-                                    <button class="board-slide-left">&#10094;</button>
-                                    <div class="img-list-inner board-list"
-                                         th:each="imgUrl : ${boardImages[boards.boardIdx]}">
-                                        <img th:src="@{${'/board-images/' + imgUrl}}" alt="게시물 이미지">
-                                    </div>
-                                    <button class="board-slide-right">&#10095;</button>
-                                </div>
-                            </div>
-                        </a>
-                        <div class="post-actions">
-                            <span class="toggle-comments">💬 <span th:text="${boards.boardComent}"></span></span>
-                            <span>
-                                <span class="boardLike-btn" th:data-board-idx="${boards.boardIdx}">❤️</span>
-                                <span class="board-like-count" th:text="${boards.boardLike}"></span>
-                            </span>
-                            <span>👀 <span th:text="${boards.boardView}"></span></span>
-                        </div>
-
-                        <!--     댓글창 팝업     -->
-                        <div class="comment-section" th:attr="data-board-id=${boards.boardIdx}"
-                             style="border-top: none;">
-                            <!--  댓글 목록 가져오기   -->
-                            <div th:each="comment : ${commentList[boards.boardIdx]}" class="comment-bar">
-                                <div>
-                                    <div class="post-header">
-                                        <a th:href="@{${'/profile/' + commentwirtes[comment.commentIdx].idx}}">
-                                            <img class="profile-img"
-                                                 th:src="@{${'/profile-images/' + commentwirtes[comment.commentIdx].userImage}}"
-                                                 alt="프로필">
-                                        </a>
-                                        <div class="user-info">
-                                            <span class="user-name"
-                                                  th:text="${commentwirtes[comment.commentIdx].userName}"></span>
-                                            <span class="user-id"
-                                                  th:text="${'@' +commentwirtes[comment.commentIdx].userId}"></span>
-                                        </div>
-                                    </div>
-                                    <div class="comment-main">
-                                        <div class="post-content comment-content" th:text="${comment.commentContent}">
-                                        </div>
-                                        <div class="board-img-list comment-img-list">
-                                            <div class="board-img-list-inner comment-img-list-inner">
-                                                <button class="board-slide-left">&#10094;</button>
-                                                <div class="comment-img-list-inner-container">
-                                                    <div class="img-list-inner"
-                                                         th:each="imgUrl : ${commentImages.get(comment.commentIdx)}">
-                                                        <img th:src="@{${'/comment-images/' + imgUrl}}" alt="게시물 이미지">
-                                                    </div>
-                                                </div>
-                                                <button class="board-slide-right">&#10095;</button>
-                                            </div>
-                                        </div>
-                                        <div class="post-actions">
-                                            <span class="toggle-comments">💬 <span
-                                                    th:text="${comment.commentRelay}"></span></span>
-                                            <span>
-                                <span class="comment-like-btn" th:data-comment-idx="${comment.commentIdx}">❤️</span>
-                                <span class="comment-like-count" th:text="${comment.commentLike}"></span>
-                            </span>
-                                            <span>👀 <span th:text="${comment.commentView}"></span></span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="board-detail-src">
-                                <a th:href="@{${'/board/' + boards.boardIdx}}">댓글 더보기</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="mypage-item">
+            <label class="mypage-label">사용자아이디</label>
+            <div class="mypage-value" th:text="${member.userName}"></div>
         </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">userid</label>
+            <div class="mypage-value" th:text="${member.userId}"></div>
+        </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">휴대폰 번호</label>
+            <div class="mypage-value" th:text="${member.userPhoneNumber}"></div>
+        </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">이메일</label>
+            <div class="mypage-value" th:text="${member.userEmail}"></div>
+        </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">계정 생성</label>
+            <div class="mypage-value" th:text="${#temporals.format(member.userAt, 'yyyy년 MM월 dd일 HH시 mm분 ss시 에 생성')}"></div>
+        </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">나이</label>
+            <div class="mypage-value" th:text="${member.userAge}"></div>
+        </div>
+
+        <div class="mypage-item">
+            <label class="mypage-label">주소</label>
+            <div class="mypage-value" th:text="${member.userAddress}"></div>
+        </div>
+        <form action="/delete/user" method="post" >
+            <button class="delete-btn" onclick="confirmDelete()">계정 삭제</button>
+        </form>
     </div>
 </th:block>
 </body>
 </html>
 <script>
-    // 해당 유저를 승인하기
-    document.querySelectorAll(".approve-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const setIdx = this.dataset.idx;
-            const currentBtn = this; // 버튼 참조 저장
-
-            const isConfirmed = confirm("정말 이 유저를 승인하시겠니까?");
-            if (!isConfirmed) {
-                return;
-            }
-
-            fetch(`/admin/approveUser`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({userIdx: setIdx}) // userIdx 값을 Controller 보내줌
-            })
-                .then(response => response.json()) // 서버 응답을 JSON 으로 받기
-                .then(data => {
-                    console.log("서버 응답 :", data);
-                    // 버튼 텍스트를 "승인 완료"로 변경
-                    currentBtn.textContent = "승인 완료";
-                    currentBtn.classList.add("un-approve-btn");
-                    // 버튼 비활성화 (원하는 경우)
-                    currentBtn.disabled = true;
-
-                    // 실시간 승인 유저 업데이트
-                    if (data.InProgressCount !== undefined) {
-                        document.getElementById('InProgress').textContent = data.InProgressCount;
-                    }
-                    if (data.InCompletedCount !== undefined) {
-                        document.getElementById('InCompleted').textContent = data.InCompletedCount;
-                    }
-                    // 기존 In-progress에서 삭제
-                    const memberElement = btn.closest('.In-progress');
-                    if (memberElement) {
-                        memberElement.remove();
-                    }
-
-                    // In-completed 영역에 새로 추가
-                    const completedContainer = document.querySelector('.In-completed');
-                    if (completedContainer) {
-                        const newMemberDiv = document.createElement('div');
-                        newMemberDiv.className = 'In-completed'; // 스타일 클래스 이름
-
-                        newMemberDiv.innerHTML = `
-                    <div class="In-completed" th:each="member : ${memberList}"
-                         th:if="${member.userAction == 'In-completed'}">
-                        <a th:href="@{${'/profile/' + member.idx}}">
-                            <div class="user-image">
-                                <img th:src="@{${'/profile-images/' + member.userImage}}" alt="" width="50px"
-                                     style="border-radius: 50%">
-                            </div>
-                        </a>
-                        <div class="user-info">
-                            <div class="user-info-inner">
-                                <span class="user-name" th:text="${member.userName}"></span>
-                                <span class="user-id" th:text="${'@'+member.userId}"></span>
-                                <a th:href="@{${'/message/' + member.idx}}">
-                                    <img src="/local-images/conversation.png" alt="" width="20px">
-                                </a>
-                            </div>
-                            <div class="user-action">
-                                <button class="un-approve-btn" disabled>승인완료</button>
-                                <button class="delete-btn" th:data-idx="${member.idx}">계정삭제 하기</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                        completedContainer.appendChild(newMemberDiv);
-                    }
-                });
-        });
-    });
-
-    // 해당 유저를 삭제하기
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", function () {
-            const setIdx = this.dataset.idx;
-            const currentBtn = this; // 버튼 참조 저장
-
-            const isConfirmed = confirm("정말 이 유저를 삭제하시겠습니까?");
-            if (!isConfirmed) {
-                return;
-            }
-
-            fetch(`/admin/DeleteUser`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({userIdx: setIdx}) // userIdx 값을 Controller 보내줌
-            })
-                .then(response => response.json()) // 서버 응답을 JSON 으로 받기
-                .then(data => {
-                    console.log("서버 응답 :", data);
-                    // 버튼 텍스트를 "승인 완료"로 변경
-                    currentBtn.textContent = "삭제 완료";
-                    currentBtn.classList.add("un-approve-btn");
-                    // 버튼 비활성화 (원하는 경우)
-                    currentBtn.disabled = true;
-
-                    // 실시간 승인 유저 업데이트
-                    if (data.InProgressCount !== undefined) {
-                        document.getElementById('InProgress').textContent = data.InProgressCount;
-                    }
-                    if (data.InCompletedCount !== undefined) {
-                        document.getElementById('InCompleted').textContent = data.InCompletedCount;
-                    }
-
-                    // 삭제된 유저 DOM 요소 삭제
-                    let userElement = currentBtn.closest('.In-progress'); // 먼저 In-progress에서 찾아보고
-                    if (!userElement) {
-                        userElement = currentBtn.closest('.In-completed'); // 없으면 In-completed에서 찾아
-                    }
-                    if (userElement) {
-                        userElement.remove(); // 최종적으로 해당 div 삭제
-                    }
-                });
-        });
-    });
-
-
-    // 이미지 슬라이 버튼 클릭시 a 태그로 가는 이동 막기
-    document.querySelectorAll('.board-slide-left, .board-slide-right')
-        .forEach(btn => {
-            btn.addEventListener('click', function (event) {
-                event.preventDefault();      // a 태그 이동 막기
-                event.stopPropagation();    // 부모 요소로 이벤트 전파도 막기
-
-                // 슬라이드 로직 실행
-                console.log("슬라이드 버튼 클릭!");
-            });
-        });
-
-    // 댓글 창 열기 토글
-    document.addEventListener("DOMContentLoaded", function () {
-        const commentToggles = document.querySelectorAll(".toggle-comments");
-        commentToggles.forEach(toggle => {
-            toggle.addEventListener("click", function () {
-                const commentSection = this.closest(".post").querySelector(".comment-section");
-                if (commentSection.style.display === "none" || commentSection.style.display === "") {
-                    commentSection.style.display = "block";
-                } else {
-                    commentSection.style.display = "none";
-                }
-            });
-        });
-    });
-
-    // 현재 시간에서 - 게실물 올린 시간 나타내기
-    document.addEventListener("DOMContentLoaded", function () {
-        const timeElements = document.querySelectorAll(".time");
-
-        timeElements.forEach(element => {
-            const boardTime = new Date(element.getAttribute("data-time")); // 게시물 시간
-            const now = new Date(); // 현재 시간
-
-            const diff = Math.floor((now - boardTime) / 1000); // 초 단위 차이
-
-            let timeAgo;
-            if (diff < 60) {
-                timeAgo = "방금 전";
-            } else if (diff < 3600) {
-                timeAgo = Math.floor(diff / 60) + "분 전";
-            } else if (diff < 86400) {
-                timeAgo = Math.floor(diff / 3600) + "시간 전";
-            } else if (diff < 604800) {
-                timeAgo = Math.floor(diff / 86400) + "일 전";
-            } else {
-                timeAgo = boardTime.toISOString().split("T")[0]; // 1주 이상이면 날짜 표시
-            }
-
-            element.textContent = timeAgo;
-        });
-    });
-
-    // 게실물 이미지 버튼
-    function ImgUpload(event) {
-        event.preventDefault(); // 기본 이벤트(폼 제출) 방지
-        document.querySelector(".upload-btn").click();
+    function confirmDelete() {
+        if (confirm('정말로 계정을 삭제하시겠습니까?')) {
+            // 여기에 삭제 처리 로직 (예: form submit or fetch)
+            alert('계정이 삭제되었습니다.');
+        }
     }
-
-    // 댓글 이미지 버튼
-    function CommentImgUpload(event) {
-        event.preventDefault();
-
-        const button = event.currentTarget; // 이미지 선택 버튼을 클릭
-        const boardId = button.dataset.boardId; // 클릭한 버튼의 data 값을 가져옴
-
-        // 더 안전하게: 버튼 기준으로 가장 가까운 comment-section 찾기
-        const commentSection = button.closest(".comment-section");// 버튼 기준으로 가장 가까운 .comment-section 찾기
-
-        const fileInput = commentSection.querySelector(".commentupload-btn"); // 해당 섹션 안의 input[type="file"] 찾기
-
-        fileInput.dataset.boardId = boardId; // fileInput에 data 값을 강제로 넣어줌
-        fileInput.click(); // input 클릭해서 파일 선택창 열기
-    }
-
-    // 게시물 이미지 슬라이드
-    document.addEventListener("DOMContentLoaded", function () {
-        const sliders = document.querySelectorAll(".board-img-list-inner");
-
-        sliders.forEach(slider => {
-            const imgContainer = slider.querySelectorAll(".board-list");
-            const images = Array.from(imgContainer);
-            const leftBtn = slider.querySelector(".board-slide-left");
-            const rightBtn = slider.querySelector(".board-slide-right");
-            let currentIndex = 0;
-            const imgWidth = 285; // 이미지 크기 (275px + 여백 25px 고려)
-            const maxIndex = images.length - 2; // ✅ 최대 이동 가능 인덱스
-
-            // 슬라이드 이동 함수
-            function updateSlide() {
-                const offset = -(currentIndex * imgWidth);
-                imgContainer.forEach(img => img.style.transform = `translateX(${offset}px)`);
-
-                // 왼쪽 버튼 제어
-                leftBtn.style.display = currentIndex > 0 ? 'block' : 'none';
-
-                // 오른쪽 버튼 제어
-                rightBtn.style.display = currentIndex >= maxIndex ? 'none' : 'block';
-            }
-
-            // ⬅️ 왼쪽 이동
-            leftBtn.addEventListener("click", function () {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSlide();
-                }
-            });
-
-            // ➡️ 오른쪽 이동
-            rightBtn.addEventListener("click", function () {
-                if (currentIndex < maxIndex) {
-                    currentIndex++;
-                    updateSlide();
-                }
-            });
-
-            // 초기 슬라이드 상태 업데이트
-            updateSlide();
-        });
-    });
-
-    // 댓글 리스트 이미지 슬라이드
-    document.addEventListener("DOMContentLoaded", function () {
-        const sliders = document.querySelectorAll(".comment-img-list-inner");
-
-        sliders.forEach(slider => {
-            const imgContainer = slider.querySelector(".comment-img-list-inner-container");
-            const images = slider.querySelectorAll(".img-list-inner");
-            const leftBtn = slider.querySelector(".board-slide-left");
-            const rightBtn = slider.querySelector(".board-slide-right");
-
-            if (!imgContainer || images.length === 0) return;
-
-            const imageWidth = 285; // 이미지 275 + 마진 포함
-            const moveStep = 275;   // 슬라이드 이동 폭
-            const viewWidth = 456;  // 보여지는 영역 폭
-
-            const totalWidth = images.length * imageWidth;
-            const maxTranslateX = totalWidth - viewWidth;
-
-            const translatePositions = [];
-            let currentX = 0;
-
-            while (currentX + viewWidth < totalWidth) {
-                translatePositions.push(currentX);
-                currentX += moveStep;
-            }
-
-            // 마지막 위치 추가 (끝까지 보이게)
-            if (translatePositions[translatePositions.length - 1] !== maxTranslateX) {
-                translatePositions.push(maxTranslateX);
-            }
-
-            let currentIndex = 0;
-
-
-            function updateSlide() {
-                if (images.length > 1) {
-                    const offset = -translatePositions[currentIndex];
-                    imgContainer.style.transform = `translateX(${offset}px)`;
-                } else {
-                    imgContainer.style.transform = `translateX(0px)`;
-                }
-                leftBtn.style.display = currentIndex > 0 ? 'block' : 'none';
-                rightBtn.style.display = currentIndex < translatePositions.length - 1 ? 'block' : 'none';
-            }
-
-            rightBtn.addEventListener("click", () => {
-                if (currentIndex < translatePositions.length - 1) {
-                    currentIndex++;
-                    updateSlide();
-                }
-            });
-
-            leftBtn.addEventListener("click", () => {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateSlide();
-                }
-            });
-
-            updateSlide();
-        });
-    });
-
-
-    // 게시글 삭제 토글
-    function toggleDeleteForm(btn) {
-        const post = btn.closest('.post');
-        const deleteForm = post.querySelector('.delete-form');
-        deleteForm.classList.toggle('show');
-    }
-
-    document.querySelectorAll('.delete-form').forEach(btn => {
-        btn.addEventListener("click", function () {
-            const idx = btn.dataset.idx;
-
-            const isConfirmed = confirm("정말 이 유저의 게시물을 삭제하시겠습니까?");
-            if (!isConfirmed) {
-                return;
-            }
-
-            fetch(`/board/Delete`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({boardIdx: idx}) // useridx 값으로 JSON을 보낸다
-            })
-                .then(response => response.json()) // 서버 응답을 JSON으로 받기
-                .then(data => {
-                    console.log("서버 응답 :", data);
-                    if (data.BoardCount !== undefined) {
-                        document.getElementById("total-posts").textContent = data.BoardCount;
-                    }
-
-                    // 삭제된 게시글을 화면에서도 지운다
-                    const postElement = btn.closest('.post');
-                    if (postElement) {
-                        postElement.remove();  // DOM에서 삭제
-                    }
-                });
-        });
-    });
 </script>

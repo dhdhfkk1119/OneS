@@ -5,6 +5,7 @@ import com.example.ones.Repository.BoardRepository;
 import com.example.ones.Repository.MemberRepository;
 import jakarta.validation.constraints.Null;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,7 +23,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public String uploadURL = "C:/Project/OneS/src/main/resources/static/board-images";
+    @Value("${file.upload-board}")
+    public String uploadURL;
 
     // 게시물 등록하기 index 에서
     public Board registerBoard(Board board, Long useridx, MultipartFile[] files) throws IOException {

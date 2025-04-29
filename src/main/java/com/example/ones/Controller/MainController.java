@@ -41,10 +41,13 @@ public class MainController {
         Map<Long,List<Comment>> boardComments = new HashMap<>(); // 각 게시물에 달린 댓글 정보 가져오기
         Map<Long,Member> CommentsMembers = new HashMap<>(); // 댓글을 작성한 유저의 정보를 가져오기
         Map<Long,List<String>> CommentImages = new HashMap<>(); // 댓글에 달린 유저 정보인 이미지를 , 로 가져오기
-
+        Map<Long, Long> commentCounts = new HashMap<>(); // 게시물에 달린 댓글 갯수
 
 
         for (Board board : boards){
+            Long CommentCount = commentRepository.countByCommentBoardidx(board.getBoardIdx());
+            commentCounts.put(board.getBoardIdx(), CommentCount);
+
             Long useridx = board.getBoardUseridx();
             Member writer = memberRepository.findByIdx(useridx).orElseThrow(() -> new RuntimeException("게시물 작성자를 찾을 수 없습니다"));
             boardMembers.put(board.getBoardIdx(), writer);
@@ -58,6 +61,8 @@ public class MainController {
             //게시물에 작성한 해당하는 댓글 정보 가져오기
             List<Comment> comment = commentRepository.findByCommentBoardidx(board.getBoardIdx());
             boardComments.put(board.getBoardIdx(), comment);
+
+
 
             //댓글을 작성한 유저의 정보를 가져오기 및 이미지 값 나누기
             for (Comment comment1 : comment) {
@@ -85,6 +90,7 @@ public class MainController {
         model.addAttribute("boardImages", boardImages);
         model.addAttribute("comment", new Comment());
         model.addAttribute("board", new Board()); // 새 게시물 작서용 객체
+        model.addAttribute("commentCounts", commentCounts); // 게시물에 달린 댓글 갯수
         return "index";
     }
 
