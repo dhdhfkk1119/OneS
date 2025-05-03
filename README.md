@@ -18,7 +18,69 @@
 ![image](https://github.com/user-attachments/assets/3bd4720a-007f-4aba-8803-44c7e6e3c391)
 
 ### admin 일반유저 승인하기
-> - admin 페이지 일반 유저 승인 및 계정 삭제 , 게시물 관리(삭제)
+- admin 페이지 일반 유저 승인 및 계정 삭제 , 게시물 관리(삭제)
+  
 ![image](https://github.com/user-attachments/assets/fb274933-d32a-45b6-8aaa-dfc2fb6ced5c)
 
-###
+### 게시물 작성
+![image](https://github.com/user-attachments/assets/55aaf674-81d5-4f07-9595-4560412c38a3)
+
+### 댓글 작성
+![image](https://github.com/user-attachments/assets/7da8fdca-6a4a-4024-b7ac-df8914dd0605)
+
+### 팔로우 추가 및 취소
+- 현재 나를 팔로우하고있으면 -> 로그인 유저의 팔로워 및 상대 팔로잉 목록에 추가
+- 내가 상대를 팔로우하고있으면 -> 나의 팔로잉 및 상대 팔로워 목록에 추가
+- 자신이 팔로우 및 팔로잉 리스트를 확인 가능
+  
+![image](https://github.com/user-attachments/assets/c1fdd726-8208-4991-ba8c-dfdb7de32285)
+
+### 메세지 보내기
+- 유저 프로필에 들어가면 메세지를 보낼수 있음
+- 메세지 목록에서 최근까지 보낸 메세지를 확인 가능 (제일 마지막 메세지확인)
+- 팔로우 상대를 추가해서 메세지 기능 가능
+  
+![image](https://github.com/user-attachments/assets/2914781e-b751-41ea-87f1-07e1c2cb2e5f)
+
+### 프로필 이름 및 이미지 변경
+![image](https://github.com/user-attachments/assets/1813ca3a-8ed7-4c46-934a-39b29a8095fd)
+
+### MyPage 계정 회원 탈퇴 및 회원정보
+![image](https://github.com/user-attachments/assets/5814cd10-0345-425c-9446-94878583d68c)
+
+### 간략한 전체 템플릿 및 전체 기능 정리
+- 회원가입(중복확인)
+- 로그인(아이디 비밀번호 확인)
+- 게시판(이미지 5장까지 슬라이드),
+- 댓글(5장까지(슬라이드) ,
+- 어드민(페이지) 승인 및 게시물삭제
+- 각 게시물 찜하기
+- 프로필 페이지 - 유저이름 변경 및 이미지 변경
+- 프로필 페이지 - 찜하기 및 댓글 게시물 작성한거를 확인 가능
+- 게시물 검색 및 사용자 검색
+- 메세지 기능(이미지도 가능)
+
+![image](https://github.com/user-attachments/assets/6e4e0a96-4615-4de6-b346-751812347a50)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
