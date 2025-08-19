@@ -1,5 +1,5 @@
 ### 코드에 대한 자세한 설명은 ->  [벨로그](https://velog.io/@dhdhfkk1119/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-%EC%86%8C%EA%B0%9C%ED%8C%85-%EB%B0%8F-SNS-%EC%82%AC%EC%9D%B4%ED%8A%B8)
-### 코드에 대한 자세한 구현 영상은 -> [유튜브](https://studio.youtube.com/video/tpzLvj5iiyQ/edit)
+### 코드에 대한 자세한 구현 영상은 -> [유튜브](https://www.youtube.com/watch?v=tpzLvj5iiyQ)
 ### 작품 제목 : SpringBoot를 이용한 SNS 소통 웹 사이트 
 
 > - 게시물 작성 및 댓글 기능 <br>
