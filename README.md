@@ -1,7 +1,28 @@
 ### 코드에 대한 자세한 설명은 ->  [벨로그](https://velog.io/@dhdhfkk1119/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-%EC%86%8C%EA%B0%9C%ED%8C%85-%EB%B0%8F-SNS-%EC%82%AC%EC%9D%B4%ED%8A%B8)
 ### 코드에 대한 자세한 구현 영상은 -> [유튜브](https://www.youtube.com/watch?v=tpzLvj5iiyQ)
-### 작품 제목 : SpringBoot를 이용한 SNS 소통 웹 사이트 
 
+# 📝 Back Server 소개 
+
+
+## 💻 0. Getting Started 프로그램 시작하는 법 
+- server 깃 코드 다운 받으신 후 프로그램 실행 (IntelliJ , VScode , Eclipse) 등등
+- 실행하면 Server에서 등록된 Gemini기본키 주석 처리 하셔야 할겁니다
+
+
+## 📖 Project Overview (프로젝트 개요)
+- 프로젝트 이름: OneS 
+- 프로젝트 설명: 1:1 채팅 커뮤니티 사이트
+- 
+
+## 🛠️ 개발 환경 
+- **언어** : JAVA
+- **프레임워크** : SpringBoot
+- **JDK** : Java 21 
+- **Build Tool** : Gradle (groovy)
+- **DBMS** : Mysql (Mysql workbench 8.0)
+- **ORM** : JPA
+
+## 주요 기능 설명 : 
 > - 게시물 작성 및 댓글 기능 <br>
 > - 회원 가입 및 로그인 -> 로그인시에 승인한 유저만 게시물 볼수있음<br>
 > - JSON을 사용해서 실시간으로 찜하기 및 취소하기 가능 <br>
