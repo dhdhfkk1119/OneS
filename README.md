@@ -6,7 +6,7 @@
 
 ## 💻 0. Getting Started 프로그램 시작하는 법 
 - server 깃 코드 다운 받으신 후 프로그램 실행 (IntelliJ , VScode , Eclipse) 등등
-- 실행하면 Server에서 등록된 Gemini기본키 주석 처리 하셔야 할겁니다
+
 
 
 ## 📖 Project Overview (프로젝트 개요)
@@ -17,12 +17,12 @@
 ## 🛠️ 개발 환경 
 - **언어** : JAVA
 - **프레임워크** : SpringBoot
-- **JDK** : Java 21 
+- **JDK** : Java 23 
 - **Build Tool** : Gradle (groovy)
 - **DBMS** : Mysql (Mysql workbench 8.0)
 - **ORM** : JPA
 
-## 주요 기능 설명 : 
+## 🔑 주요 기능 설명 : 
 > - 게시물 작성 및 댓글 기능 <br>
 > - 회원 가입 및 로그인 -> 로그인시에 승인한 유저만 게시물 볼수있음<br>
 > - JSON을 사용해서 실시간으로 찜하기 및 취소하기 가능 <br>
@@ -31,7 +31,7 @@
 > - 어드민 페이지 -> 일반 유저 승인 및 계정삭제 , 게시물 관리(삭제)
 > - 일반유저 페이지 -> 회원 탈퇴 및 회원에 대한 정보(회원가입 정보)
 
-## 전체적인 구현 이미지 동영상 
+## 🎞️ 전체적인 구현 이미지 동영상 
 ### 회원가입
 <img src="https://velog.velcdn.com/images/dhdhfkk1119/post/dc575c69-cfd5-4497-91b3-53e0c6a31e79/image.gif">
 
